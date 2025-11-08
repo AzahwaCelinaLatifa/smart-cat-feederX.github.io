@@ -5,7 +5,6 @@ const navItems = [
   { title: "Home", url: "/", icon: Home },
   { title: "Schedule", url: "/schedule", icon: Calendar },
   { title: "History", url: "/history", icon: History },
-  { title: "Control", url: "/control", icon: Sliders },
   { title: "Camera", url: "/camera", icon: Camera },
   { title: "Profile", url: "/profile", icon: User },
 ];

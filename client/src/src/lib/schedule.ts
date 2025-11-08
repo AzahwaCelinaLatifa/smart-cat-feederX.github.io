@@ -1,16 +1,16 @@
 // schedule.ts
-import rtdbApp from "@/lib/firebase";
-import { getDatabase, ref, push, remove, update, onValue, off } from "firebase/database";
+import rtdbApp, { getDatabase, ref, push, remove, update, onValue, off } from "@/lib/firebase";
 
 const rtdb = getDatabase(rtdbApp);
 const SCHEDULES_REF = ref(rtdb, "schedules");
 
-// Tambah jadwal
-export const addSchedule = async (schedule: { time: string; amount: number }) => {
+// Add schedule
+// schedule: { intervals: number[]; amount: number }
+export const addSchedule = async (schedule: { intervals: number[]; amount: number }) => {
   await push(SCHEDULES_REF, schedule);
 };
 
-// Hapus jadwal
+// Delete schedule
 export const deleteSchedule = async (id: string) => {
   await remove(ref(rtdb, `schedules/${id}`));
 };
@@ -18,21 +18,21 @@ export const deleteSchedule = async (id: string) => {
 // Update jadwal
 export const updateSchedule = async (
   id: string,
-  schedule: { time: string; amount: number }
+  schedule: { intervals: number[]; amount: number }
 ) => {
   await update(ref(rtdb, `schedules/${id}`), schedule);
 };
 
 // Listener realtime (otomatis update UI)
 export const listenSchedules = (
-  callback: (schedules: { id: string; time: string; amount: number }[]) => void
+  callback: (schedules: { id: string; intervals?: number[]; time?: string; amount?: number }[]) => void
 ) => {
   onValue(SCHEDULES_REF, (snapshot) => {
     const data = snapshot.val();
     const result = data
       ? Object.entries(data).map(([id, value]: any) => ({
           id,
-          ...(value as { time: string; amount: number }),
+          ...(value as { intervals?: number[]; time?: string; amount?: number }),
         }))
       : [];
     callback(result);

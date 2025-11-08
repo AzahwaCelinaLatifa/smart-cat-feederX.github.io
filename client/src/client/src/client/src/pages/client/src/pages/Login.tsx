@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "@/lib/firebase";
 import { auth } from "../firebase";
 
 const Login: React.FC = () => {
