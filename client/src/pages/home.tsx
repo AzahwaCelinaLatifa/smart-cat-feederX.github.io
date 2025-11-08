@@ -20,7 +20,10 @@ export default function Home() {
   const [showFeedDialog, setShowFeedDialog] = useState(false);
   
   // Mock data
-  const foodLevel = 65;
+  // Display food level in grams with a capacity of 50 g
+  const foodPercent = 65; // stored as percent internally
+  const capacityGrams = 50;
+  const foodGrams = Math.round((foodPercent / 100) * capacityGrams);
   const nextFeeding = "7:00 PM";
   const lastFed = "2:00 PM";
 
@@ -64,11 +67,11 @@ export default function Home() {
             <div className="space-y-2">
               <div className="flex items-baseline gap-2">
                 <span className="text-2xl font-bold text-foreground" data-testid="text-food-level">
-                  {foodLevel}%
+                  {foodGrams} g / {capacityGrams} g
                 </span>
-                <span className="text-sm text-muted-foreground">full</span>
+                <span className="text-sm text-muted-foreground">remaining</span>
               </div>
-              <Progress value={foodLevel} className="h-2" />
+              <Progress value={foodPercent} className="h-2" />
             </div>
           </CardContent>
         </Card>

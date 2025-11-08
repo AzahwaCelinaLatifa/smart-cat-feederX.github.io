@@ -1,26 +1,26 @@
-import { db } from "@/lib/firebase";
-import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "firebase/firestore";
+import { db, collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "@/lib/firebase";
 
 const scheduleRef = collection(db, "feedingSchedules");
 
-// Tambah jadwal
-export const addSchedule = async (data: { time: string; amount: number }) => {
+// Add schedule
+// data: { intervals: number[]; amount: number }
+export const addSchedule = async (data: { intervals: number[]; amount: number }) => {
   return await addDoc(scheduleRef, data);
 };
 
-// Ambil semua jadwal
+// Get all schedules
 export const getSchedules = async () => {
   const snapshot = await getDocs(scheduleRef);
   return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 };
 
-// Update jadwal
+// Update schedule
 export const updateSchedule = async (id: string, data: any) => {
   const ref = doc(db, "feedingSchedules", id);
   return await updateDoc(ref, data);
 };
 
-// Hapus jadwal
+// Delete schedule
 export const deleteSchedule = async (id: string) => {
   const ref = doc(db, "feedingSchedules", id);
   return await deleteDoc(ref);

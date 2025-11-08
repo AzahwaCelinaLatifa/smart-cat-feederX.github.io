@@ -15,7 +15,6 @@ const menuItems = [
   { title: "Home", url: "/", icon: Home },
   { title: "Schedule", url: "/schedule", icon: Calendar },
   { title: "History", url: "/history", icon: History },
-  { title: "Control", url: "/control", icon: Sliders },
   { title: "Camera", url: "/camera", icon: Camera },
   { title: "Profile", url: "/profile", icon: User },
 ];
@@ -26,7 +25,7 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader className="p-6 pb-4">
-        <h1 className="text-xl font-semibold text-sidebar-foreground">Smart Cat Feeder</h1>
+  <h1 className="text-xl font-semibold text-sidebar-foreground">Pawsitive Feed</h1>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>

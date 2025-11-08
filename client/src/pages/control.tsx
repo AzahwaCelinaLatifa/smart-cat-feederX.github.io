@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Zap, Power } from "lucide-react";
+import { Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -16,13 +16,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 
-import { getFunctions, httpsCallable } from "firebase/functions";
+import { getFunctions, httpsCallable } from "@/lib/firebase";
 
 export default function Control() {
   const { toast } = useToast();
 
-  // 🔹 State untuk toggle Auto-Feeding dan dialog
-  const [autoFeeding, setAutoFeeding] = useState(true);
+  // 🔹 State untuk dialog dan loading
   const [showFeedDialog, setShowFeedDialog] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -30,16 +29,7 @@ export default function Control() {
   const functions = getFunctions();
   const feedNowCallable = httpsCallable(functions, "feedNow");
 
-  // 🔹 Toggle Auto-Feeding
-  const handleAutoFeedingToggle = (checked: boolean) => {
-    setAutoFeeding(checked);
-    toast({
-      title: checked ? "Auto-feeding enabled" : "Auto-feeding disabled",
-      description: checked 
-        ? "Your cat will be fed according to the schedule" 
-        : "Automatic feeding has been turned off",
-    });
-  };
+  // (Auto-feeding setting moved to Profile > Settings)
 
   // 🔹 Handle Feed Now
   const handleFeedNow = async () => {
@@ -107,36 +97,7 @@ export default function Control() {
         </CardContent>
       </Card>
 
-      {/* Auto-Feeding Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Power className="h-5 w-5 text-primary" />
-            Auto-Feeding
-          </CardTitle>
-          <CardDescription>
-            Enable or disable scheduled feeding
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <Label htmlFor="auto-feeding" className="text-base">
-              Automatic Feeding {autoFeeding ? "Enabled" : "Disabled"}
-            </Label>
-            <Switch
-              id="auto-feeding"
-              checked={autoFeeding}
-              onCheckedChange={handleAutoFeedingToggle}
-              data-testid="switch-auto-feeding"
-            />
-          </div>
-          <p className="text-sm text-muted-foreground mt-4">
-            {autoFeeding 
-              ? "Your cat will be fed automatically according to the set schedule" 
-              : "Scheduled feeding is currently disabled. Enable to resume automatic feeding"}
-          </p>
-        </CardContent>
-      </Card>
+      {/* Auto-Feeding setting moved to Profile > Settings */}
 
       {/* Feed Now Dialog */}
       <AlertDialog open={showFeedDialog} onOpenChange={setShowFeedDialog}>

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { onAuthStateChanged, auth } from "@/lib/firebase";
+import type { User } from "@/lib/firebase";
 
 interface AuthContextType {
   user: User | null;

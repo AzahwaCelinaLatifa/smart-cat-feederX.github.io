@@ -1,7 +1,7 @@
 {
-  "name": "Smart Cat Feeder",
-  "short_name": "Cat Feeder",
-  "description": "Monitor and control your cat's feeding schedule",
+  "name": "Pawsitive Feed",
+  "short_name": "Pawsitive Feed",
+  "description": "Monitor and control your pet's feeding schedule",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#fafafa",
