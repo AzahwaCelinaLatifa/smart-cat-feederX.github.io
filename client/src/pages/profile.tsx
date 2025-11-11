@@ -9,10 +9,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { signOut } from "@/lib/firebase";
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Profile() {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [autoFeeding, setAutoFeeding] = useState(true);
 
@@ -65,12 +67,13 @@ export default function Profile() {
 
   const confirmLogout = async () => {
     try {
-      await signOut(undefined);
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
       setLogoutOpen(false);
       toast({ title: "Logged out", description: "You have been successfully logged out" });
-    } catch (e) {
+    } catch (e: any) {
       setLogoutOpen(false);
-      toast({ title: "Error", description: "Could not log out" });
+      toast({ title: "Error", description: e?.message || "Could not log out" });
     }
   };
 
@@ -164,7 +167,7 @@ export default function Profile() {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Email</p>
-              <p className="text-base font-medium" data-testid="text-email">user@email.com</p>
+              <p className="text-base font-medium" data-testid="text-email">{user?.email ?? '—'}</p>
             </div>
           </div>
         </CardContent>
