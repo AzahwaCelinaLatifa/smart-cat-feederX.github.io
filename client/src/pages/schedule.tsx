@@ -105,21 +105,44 @@ export default function SchedulePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex items-center justify-between relative">
+        {/* Decorative paw icon in the background */}
+        <div className="fixed right-4 bottom-20 pointer-events-none z-[60] opacity-10 transform rotate-6">
+          {/* Decorative paw silhouette positioned above the bottom nav (fixed to viewport bottom-right) */}
+          <svg
+            className="w-52 h-52 md:w-64 md:h-64 text-primary"
+            viewBox="0 0 64 64"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            role="img"
+          >
+            {/* main pad: wider horizontal oval ("tidur") rotated slightly */}
+            <ellipse cx="34" cy="38" rx="14.5" ry="9" transform="rotate(-12 34 38)" fill="currentColor" />
+
+            {/* toes: spaced a bit further apart and slightly offset from the pad */}
+            <ellipse cx="18" cy="18" rx="4.8" ry="5.6" fill="currentColor" />
+            <ellipse cx="26.5" cy="12.5" rx="4.4" ry="5.2" fill="currentColor" />
+            <ellipse cx="38.5" cy="12.5" rx="4.4" ry="5.2" fill="currentColor" />
+            <ellipse cx="50" cy="22" rx="4.8" ry="5.6" fill="currentColor" />
+
+            {/* subtle inner highlight to add softness (very low opacity) */}
+            <ellipse cx="34" cy="40" rx="7" ry="5" fill="white" opacity="0.03" />
+          </svg>
+        </div>
+        <div className="z-10">
           <h1 className="text-3xl font-bold">Feeding Schedule</h1>
           <p className="text-muted-foreground mt-1">
             Manage your cat's feeding times
           </p>
-          
         </div>
-        <div>
-        <Button onClick={() => { setEditingId(null); setIntervalInputs(["4","6","8"]); setShowAddDialog(true); }} disabled={schedules.length > 0}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add
-        </Button>
-  </div>
-  </div>
+        <div className="z-10">
+          <Button onClick={() => { setEditingId(null); setIntervalInputs(["4","6","8"]); setShowAddDialog(true); }} disabled={schedules.length > 0}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add
+          </Button>
+        </div>
+      </div>
 
   <div className="grid gap-3">
                 {schedules.map((schedule) => {
