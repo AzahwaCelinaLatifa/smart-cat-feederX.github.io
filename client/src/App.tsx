@@ -9,15 +9,22 @@ import { BottomNav } from "@/components/bottom-nav";
 import Home from "@/pages/home";
 import Schedule from "@/pages/schedule";
 import Login from "@/pages/Login";
+import VerifyEmail from "@/pages/VerifyEmail";
 import History from "@/pages/history";
 import Camera from "@/pages/camera";
 import Profile from "@/pages/profile";
+import ForgotPassword from "@/pages/ForgotPassword";
+import ResetPassword from "@/pages/ResetPassword";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 
 function Router() {
   const { user, loading } = useAuth();
   return (
     <Switch>
+      {/* Public auth-related routes */}
+      <Route path="/forgot-password" component={ForgotPassword} />
+      <Route path="/reset-password" component={ResetPassword} />
+      <Route path="/verify-email" component={VerifyEmail} />
       {!user ? (
         <Route path="/*" component={Login} />
       ) : (

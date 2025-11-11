@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChanged, auth } from "@/lib/firebase";
-import type { User } from "@/lib/firebase";
+import { supabase } from "@/lib/supabase";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 interface AuthContextType {
-  user: User | null;
+  user: SupabaseUser | null;
   loading: boolean;
 }
 
@@ -12,15 +12,23 @@ const AuthContext = createContext<AuthContextType>({ user: null, loading: true }
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
+    let unsub: (() => void) | undefined;
+    (async () => {
+      const { data: sessionData } = await supabase.auth.getSession();
+      setUser(sessionData.session?.user ?? null);
       setLoading(false);
-    });
-    return () => unsubscribe();
+      const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+        setUser(session?.user ?? null);
+      });
+      unsub = listener.subscription?.unsubscribe;
+    })();
+    return () => {
+      try { unsub?.(); } catch {}
+    };
   }, []);
 
   return (

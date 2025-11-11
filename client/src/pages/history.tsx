@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Trash2, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -24,12 +24,12 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-type HistoryEntry = {
+type ApiHistory = {
   id: string;
-  time: string;
-  status: "Fed" | "Skipped" | "Failed";
-  timestamp: Date;
-  amount?: number; // grams dispensed when status is Fed
+  user_id: string;
+  feeding_time: string; // ISO
+  portion: number;
+  method: 'manual' | 'automatic';
 };
 
 type RangeType = "daily" | "weekly" | "monthly" | "yearly";
@@ -50,13 +50,22 @@ export default function History() {
   const [view, setView] = useState<"list" | "analytics">("list");
   const [range, setRange] = useState<RangeType>("daily");
 
-  const [history, setHistory] = useState<HistoryEntry[]>([
-    { id: "1", time: "7:00 AM", status: "Fed", timestamp: new Date(), amount: 50 },
-    { id: "2", time: "12:00 PM", status: "Fed", timestamp: new Date(), amount: 30 },
-    { id: "3", time: "7:00 PM", status: "Skipped", timestamp: new Date(), amount: 0 },
-    { id: "4", time: "7:00 AM", status: "Fed", timestamp: new Date(Date.now() - 86400000), amount: 45 },
-    { id: "5", time: "12:00 PM", status: "Failed", timestamp: new Date(Date.now() - 86400000), amount: 0 },
-  ]);
+  const [history, setHistory] = useState<ApiHistory[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { getHistory } = await import("@/services/api");
+        const data = await getHistory();
+        setHistory(data);
+      } catch (e) {
+        // optional toast could be added
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   const handleClearHistory = () => {
     setHistory([]);
@@ -94,11 +103,11 @@ export default function History() {
   };
 
   // Helpers to aggregate history into chart points depending on selected range
-  const aggregate = (entries: HistoryEntry[], rangeType: RangeType): AggregatedPoint[] => {
+  const aggregate = (entries: ApiHistory[], rangeType: RangeType): AggregatedPoint[] => {
     const now = new Date();
     const points = new Map<string, AggregatedPoint>();
 
-    const addToPoint = (key: string, label: string, e: HistoryEntry) => {
+    const addToPoint = (key: string, label: string, e: ApiHistory) => {
       const existing = points.get(key) ?? {
         key,
         label,
@@ -109,11 +118,10 @@ export default function History() {
         avgAmount: 0,
       };
 
-      if (e.status === "Fed") {
-        existing.fedCount += 1;
-        existing.totalAmount += e.amount ?? 0;
-      } else if (e.status === "Skipped") existing.skippedCount += 1;
-      else if (e.status === "Failed") existing.failedCount += 1;
+      // Map API rows to status buckets; we only know method & portion
+      // Treat method 'manual'/'automatic' as Fed events
+      existing.fedCount += 1;
+      existing.totalAmount += e.portion ?? 0;
 
       points.set(key, existing);
     };
@@ -150,8 +158,9 @@ export default function History() {
         : 6 * 365 * 24 * 60 * 60 * 1000;
 
     for (const e of entries) {
-      if (now.getTime() - e.timestamp.getTime() > windowMs) continue;
-      const key = makeKey(e.timestamp);
+      const when = new Date(e.feeding_time);
+      if (now.getTime() - when.getTime() > windowMs) continue;
+      const key = makeKey(when);
       addToPoint(key, makeLabel(key), e);
     }
 
@@ -249,39 +258,37 @@ export default function History() {
         <div>
           {view === "list" ? (
             <div className="space-y-3">
-              {history.map((entry, index) => (
-                <Card key={entry.id}>
-                  <CardContent className="flex items-center justify-between p-4">
-                    <div className="flex items-center gap-4">
-                      <div className="flex flex-col items-center">
-                        <div className="w-2 h-2 rounded-full bg-primary" />
-                        {index < history.length - 1 && (
-                          <div className="w-0.5 h-8 bg-border mt-2" />
-                        )}
+              {history.map((row, index) => {
+                const when = new Date(row.feeding_time);
+                return (
+                  <Card key={row.id}>
+                    <CardContent className="flex items-center justify-between p-4">
+                      <div className="flex items-center gap-4">
+                        <div className="flex flex-col items-center">
+                          <div className="w-2 h-2 rounded-full bg-primary" />
+                          {index < history.length - 1 && (
+                            <div className="w-0.5 h-8 bg-border mt-2" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-foreground" data-testid={`text-history-time-${row.id}`}>
+                            {when.toLocaleTimeString()}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {when.toLocaleDateString()} • Portion {row.portion} • {row.method}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-semibold text-foreground" data-testid={`text-history-time-${entry.id}`}>
-                          {entry.time}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {entry.timestamp.toLocaleDateString()}
-                        </p>
+                      <div className="flex items-center gap-3">
+                        <Badge variant="default" className="flex items-center gap-1" data-testid={`badge-status-${row.id}`}>
+                          <CheckCircle className="h-4 w-4" />
+                          Fed
+                        </Badge>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Badge 
-                        variant={getStatusVariant(entry.status)} 
-                        className="flex items-center gap-1"
-                        data-testid={`badge-status-${entry.id}`}
-                      >
-                        {getStatusIcon(entry.status)}
-                        {entry.status}
-                      </Badge>
-                      {entry.status === "Fed" && null}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           ) : (
             <Card>
