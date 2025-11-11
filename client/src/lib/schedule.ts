@@ -1,27 +1,26 @@
-import { db, collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "@/lib/firebase";
+// Supabase-backed schedule helpers via backend API
+import { createSchedule as apiCreate, getSchedules as apiList, updateSchedule as apiUpdate, deleteSchedule as apiDelete } from "@/services/api";
 
-const scheduleRef = collection(db, "feedingSchedules");
-
-// Add schedule
-// data: { intervals: number[]; amount: number }
-export const addSchedule = async (data: { intervals: number[]; amount: number }) => {
-  return await addDoc(scheduleRef, data);
+export type ApiSchedule = {
+  id: string;
+  user_id: string;
+  time: string; // ISO string
+  portion: number;
+  active: boolean;
 };
 
-// Get all schedules
-export const getSchedules = async () => {
-  const snapshot = await getDocs(scheduleRef);
-  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+export const addSchedule = async (data: { time: string; portion: number; active: boolean }) => {
+  return await apiCreate(data);
 };
 
-// Update schedule
-export const updateSchedule = async (id: string, data: any) => {
-  const ref = doc(db, "feedingSchedules", id);
-  return await updateDoc(ref, data);
+export const getSchedules = async (): Promise<ApiSchedule[]> => {
+  return await apiList();
 };
 
-// Delete schedule
+export const updateSchedule = async (id: string, data: Partial<{ time: string; portion: number; active: boolean }>) => {
+  return await apiUpdate(id, data);
+};
+
 export const deleteSchedule = async (id: string) => {
-  const ref = doc(db, "feedingSchedules", id);
-  return await deleteDoc(ref);
+  return await apiDelete(id);
 };

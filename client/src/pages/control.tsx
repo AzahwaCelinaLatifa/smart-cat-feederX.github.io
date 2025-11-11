@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 
-import { getFunctions, httpsCallable } from "@/lib/firebase";
+import { manualFeed } from "@/services/api";
 
 export default function Control() {
   const { toast } = useToast();
@@ -24,10 +24,6 @@ export default function Control() {
   // 🔹 State untuk dialog dan loading
   const [showFeedDialog, setShowFeedDialog] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  // 🔹 Firebase Functions: setup callable function
-  const functions = getFunctions();
-  const feedNowCallable = httpsCallable(functions, "feedNow");
 
   // (Auto-feeding setting moved to Profile > Settings)
 
@@ -42,15 +38,13 @@ export default function Control() {
     });
 
     try {
-      // Memanggil Cloud Function feedNow
-      const res = await feedNowCallable({ amount: 50 }); // default 50g
-      const data = res.data as { commandId?: string };
-
-      console.log("FeedNow success:", data);
+      // Call backend API to record manual feed (portion 2 by default)
+      const res = await manualFeed(2);
+      console.log("FeedNow success:", res);
 
       toast({
         title: "Feeding command sent!",
-        description: `Command ID: ${data.commandId}`,
+        description: `Portion dispensed: 2`,
       });
     } catch (err: any) {
       console.error("FeedNow failed:", err);
