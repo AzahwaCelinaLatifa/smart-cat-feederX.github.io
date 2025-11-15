@@ -11,6 +11,7 @@ import { Drawer, DrawerTrigger, DrawerContent, DrawerClose, DrawerHeader, Drawer
 import { Cat } from "lucide-react";
 // Sidebar component removed to keep mobile layout consistent on desktop
 import { BottomNav } from "@/components/bottom-nav";
+import { AppSidebar } from "@/components/app-sidebar";
 import Home from "@/pages/home";
 import Schedule from "@/pages/schedule";
 import Login from "@/pages/Login";
@@ -104,12 +105,20 @@ function App() {
     );
   }
 
+  // Render left sidebar on desktop when authenticated
+  function LeftSidebar() {
+    const { user } = useAuth();
+    if (!user) return null;
+    return <AppSidebar />;
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <SidebarProvider style={style as React.CSSProperties}>
           <AuthProvider>
             <div className="flex h-screen w-full">
+              <LeftSidebar />
               <div className="flex flex-col flex-1">
                 {/* Header: left-aligned cat avatar will appear here when user is authenticated */}
                 <header className="w-full flex items-center justify-between px-4 md:px-6 py-3">
@@ -127,7 +136,10 @@ function App() {
                 </main>
               </div>
             </div>
-            <BottomNav />
+            {/* Show bottom nav only on mobile */}
+            <div className="md:hidden">
+              <BottomNav />
+            </div>
           </AuthProvider>
         </SidebarProvider>
         <Toaster />

@@ -20,9 +20,9 @@ export default function SchedulePage() {
   const [schedules, setSchedules] = useState<ApiSchedule[]>([]);
   const [showDialog, setShowDialog] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [timeLocal, setTimeLocal] = useState(""); // datetime-local value
-  const [portion, setPortion] = useState(1);
-  const [active, setActive] = useState(true);
+  // Portion and Active are now implicit defaults (portion=1, active=true)
+  const [intervals, setIntervals] = useState<number[]>([4, 6, 8]);
+  // Start-on-detect is implicit (no toggle in UI)
 
   const refresh = async () => {
     try {
@@ -37,51 +37,38 @@ export default function SchedulePage() {
     refresh();
   }, []);
 
-  const toIsoFromLocal = (local: string) => {
-    if (!local) return "";
-    // local is YYYY-MM-DDTHH:mm
-    const d = new Date(local);
-    return d.toISOString();
-  };
-
-  const toLocalFromIso = (iso: string) => {
-    const d = new Date(iso);
-    const pad = (n: number) => String(n).padStart(2, "0");
-    const yyyy = d.getFullYear();
-    const mm = pad(d.getMonth() + 1);
-    const dd = pad(d.getDate());
-    const hh = pad(d.getHours());
-    const mi = pad(d.getMinutes());
-    return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
-  };
+  // Removed time-based helpers; schedule starts on detection implicitly
 
   const openAdd = () => {
     setEditingId(null);
-    setTimeLocal("");
-    setPortion(1);
-    setActive(true);
+    setIntervals([4, 6, 8]);
     setShowDialog(true);
   };
 
   const openEdit = (s: ApiSchedule) => {
     setEditingId(s.id);
-    setTimeLocal(toLocalFromIso(s.time));
-    setPortion(s.portion);
-    setActive(!!s.active);
+    setIntervals(s.intervals && s.intervals.length ? s.intervals : [4, 6, 8]);
     setShowDialog(true);
   };
 
   const handleSave = async () => {
     try {
-      const timeIso = toIsoFromLocal(timeLocal);
-      if (!timeIso) throw new Error("Please provide date & time");
-      if (!Number.isFinite(portion) || portion < 1 || portion > 10) throw new Error("Portion must be 1..10");
+      // validate intervals: must be array of positive integers
+      if (!intervals || !intervals.length || intervals.some((n) => !Number.isFinite(n) || n <= 0)) {
+        throw new Error("Please provide one or more positive interval values (hours)");
+      }
+
+      // Implicit defaults: portion=1, active=true
+      const payload: any = { portion: 1, active: true };
+      // Always use interval schedule, start on detection implicitly
+      if (intervals && intervals.length) payload.intervals = intervals;
+      payload.start_on_detect = true;
 
       if (editingId) {
-        await updateSchedule(editingId, { time: timeIso, portion, active });
+        await updateSchedule(editingId, payload);
         toast({ title: "Updated", description: "Schedule updated" });
       } else {
-        await addSchedule({ time: timeIso, portion, active });
+        await addSchedule(payload);
         toast({ title: "Created", description: "Schedule created" });
       }
       setShowDialog(false);
@@ -144,15 +131,25 @@ export default function SchedulePage() {
 
   <div className="grid gap-3">
       {schedules.map((s) => {
-        const when = new Date(s.time).toLocaleString();
+        const hasIntervals = !!(s.intervals && s.intervals.length);
+        const hasNext = s.next_time != null;
+        const whenLabel = hasNext ? new Date(s.next_time as string).toLocaleString() : (hasIntervals ? 'Waiting for detection' : (s.time ? new Date(s.time).toLocaleString() : '—'));
         return (
           <Card key={s.id} className="border-l-4 border-l-primary">
             <CardContent className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
                 <Clock className="h-5 w-5 text-primary" />
                 <div>
-                  <div className="text-xl font-semibold">{when}</div>
-                  <div className="text-sm text-muted-foreground">Portion: {s.portion} • {s.active ? 'Active' : 'Inactive'}</div>
+                  <div className="text-xl font-semibold">{whenLabel}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {hasIntervals ? (
+                      <>
+                        Intervals: {s.intervals!.map((n, i) => `${n}h${i < s.intervals!.length - 1 ? ' • ' : ''}`)} • Portion: {s.portion} • {s.active ? 'Active' : 'Inactive'}
+                      </>
+                    ) : (
+                      <>Portion: {s.portion} • {s.active ? 'Active' : 'Inactive'}</>
+                    )}
+                  </div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -177,22 +174,54 @@ export default function SchedulePage() {
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="grid gap-3">
-              <div className="flex items-center gap-3">
-                <Label className="w-28">Time</Label>
-                <Input type="datetime-local" value={timeLocal} onChange={(e) => setTimeLocal(e.target.value)} />
+              <div className="flex items-start gap-3">
+                <Label className="w-28">Intervals (hours)</Label>
+                <div className="flex-1">
+                  {/* Helper text removed per request */}
+                  {intervals.map((iv, idx) => (
+                    <div key={idx} className="flex items-center gap-2 mb-2">
+                      <Input
+                        type="number"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        min={1}
+                        step={1}
+                        value={String(iv)}
+                        onChange={(e) => {
+                          // sanitize to integer >= 1
+                          const raw = e.target.value || '';
+                          const num = Math.max(1, parseInt(raw.replace(/\D/g, '') || '0', 10));
+                          setIntervals((cur) => cur.map((c, i) => (i === idx ? num : c)));
+                        }}
+                        onKeyDown={(e: any) => {
+                          // allow control keys and digits only
+                          const allowed = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
+                          if (allowed.includes(e.key)) return;
+                          if (!/^[0-9]$/.test(e.key)) e.preventDefault();
+                        }}
+                        onPaste={(e: any) => {
+                          const text = e.clipboardData.getData('Text') || '';
+                          if (!/^\d+$/.test(text)) e.preventDefault();
+                        }}
+                        className="w-28"
+                      />
+                      <div className="text-sm text-muted-foreground">hours</div>
+                      <Button variant="ghost" size="icon" onClick={() => setIntervals((cur) => cur.filter((_, i) => i !== idx))}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                  <div className="flex gap-2">
+                    <Button size="sm" onClick={() => setIntervals((cur) => [...cur, 4])}>
+                      <Plus className="h-4 w-4 mr-2" /> Add interval
+                    </Button>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                <Label className="w-28">Portion (1..10)</Label>
-                <Input
-                  inputMode="numeric"
-                  value={portion}
-                  onChange={(e) => setPortion(Math.max(1, Math.min(10, Number(e.target.value || 0))))}
-                />
-              </div>
-              <div className="flex items-center gap-3">
-                <Label className="w-28">Active</Label>
-                <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} />
-              </div>
+
+              {/* Start on detect and start time controls removed */}
+
+              {/* Portion and Active controls removed; they use defaults (1, active) */}
             </div>
           </div>
           <DialogFooter>
