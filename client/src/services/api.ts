@@ -27,7 +27,7 @@ export async function getSchedules() {
   return res.json()
 }
 
-export async function createSchedule(schedule: { time: string; portion: number; active: boolean }) {
+export async function createSchedule(schedule: { time?: string; intervals?: number[]; portion: number; active: boolean; start_on_detect?: boolean }) {
   const res = await fetch(`${API_BASE}/api/schedule`, {
     method: 'POST',
     headers: await authHeaders(),
@@ -37,7 +37,7 @@ export async function createSchedule(schedule: { time: string; portion: number; 
   return res.json()
 }
 
-export async function updateSchedule(id: string, updates: Partial<{ time: string; portion: number; active: boolean }>) {
+export async function updateSchedule(id: string, updates: Partial<{ time?: string; intervals?: number[]; portion?: number; active?: boolean; start_on_detect?: boolean }>) {
   const res = await fetch(`${API_BASE}/api/schedule/${id}`, {
     method: 'PUT',
     headers: await authHeaders(),
