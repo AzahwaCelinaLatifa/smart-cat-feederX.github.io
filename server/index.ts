@@ -147,18 +147,50 @@ app.get('/api/schedule', auth, async (req, res) => {
     .from('feeding_schedule')
     .select('*')
     .eq('user_id', userId)
-    .order('next_time', { ascending: true });
+    .order('next_feed_at', { ascending: true, nullsFirst: false });
   if (error) return res.status(500).json({ message: 'Gagal mengambil jadwal' });
   return res.json(data ?? []);
 });
 
 app.post('/api/schedule', auth, async (req, res) => {
   const userId = (req as any).user.id;
+
+  const { portion, active, intervals, start_on_detection, initial_start_time } = req.body ?? {};
+
   const { time, intervals, start_on_detect, portion, active } = req.body ?? {};
+
   const p = Number(portion);
   if (!Number.isFinite(p) || p < 1 || p > 10) {
     return res.status(400).json({ message: 'Portion 1..10' });
   }
+  let seq: number[] = Array.isArray(intervals) ? intervals.map(Number).filter(n => Number.isFinite(n) && n > 0) : [];
+  if (seq.length === 0) {
+    return res.status(400).json({ message: 'Intervals required (array of positive hours)' });
+  }
+  if (seq.length > 24) {
+    return res.status(400).json({ message: 'Too many intervals (max 24)' });
+  }
+  const startOnDetection = Boolean(start_on_detection);
+  let nextFeedAt: string | null = null;
+  let lastFeed: string | null = null;
+  // If not waiting for detection and an initial_start_time provided, arm immediately
+  if (!startOnDetection) {
+    const base = initial_start_time ? new Date(initial_start_time) : new Date();
+    if (isNaN(base.getTime())) return res.status(400).json({ message: 'Invalid initial_start_time' });
+    const firstHours = seq[0];
+    lastFeed = base.toISOString(); // treat base as first feed time (or detection time)
+    nextFeedAt = new Date(base.getTime() + firstHours * 3600000).toISOString();
+  }
+  const insertObj: any = {
+    user_id: userId,
+    portion: p,
+    active: Boolean(active),
+    intervals: seq,
+    start_on_detection: startOnDetection,
+    sequence_index: 0,
+    last_feed: lastFeed,
+    next_feed_at: nextFeedAt
+  };
 
   let next_time: string | null = null;
   let intervalsJson: any = null;
@@ -205,6 +237,26 @@ app.put('/api/schedule/:id', auth, async (req, res) => {
     if (!Number.isFinite(p) || p < 1 || p > 10) return res.status(400).json({ message: 'Portion 1..10' });
     updates.portion = p;
   }
+  if (req.body?.active !== undefined) updates.active = Boolean(req.body.active);
+  if (req.body?.intervals !== undefined) {
+    let seq: number[] = Array.isArray(req.body.intervals) ? req.body.intervals.map(Number).filter(n => Number.isFinite(n) && n > 0) : [];
+    if (seq.length === 0) return res.status(400).json({ message: 'Intervals required' });
+    updates.intervals = seq;
+    // Reset sequence index if intervals changed length
+    updates.sequence_index = 0;
+  }
+  if (req.body?.start_on_detection !== undefined) updates.start_on_detection = Boolean(req.body.start_on_detection);
+  // Optionally allow re-arming with initial_start_time
+  if (req.body?.initial_start_time !== undefined) {
+    const base = new Date(req.body.initial_start_time);
+    if (isNaN(base.getTime())) return res.status(400).json({ message: 'Invalid initial_start_time' });
+    updates.last_feed = base.toISOString();
+    // compute next feed
+    const { data: current } = await supabaseAdmin.from('feeding_schedule').select('intervals').eq('id', id).eq('user_id', userId).single();
+    const intervals = updates.intervals || current?.intervals || [];
+    if (intervals.length) {
+      updates.next_feed_at = new Date(base.getTime() + intervals[0] * 3600000).toISOString();
+      updates.sequence_index = 0;
   if (body.active !== undefined) updates.active = Boolean(body.active);
 
   // intervals update
@@ -278,6 +330,29 @@ app.delete('/api/schedule/:id', auth, async (req, res) => {
   return res.status(204).send();
 });
 
+// Endpoint to notify first detection event (arms schedules with start_on_detection)
+app.post('/api/detection', auth, async (req, res) => {
+  const userId = (req as any).user.id;
+  const detectionTime = new Date();
+  const detectionIso = detectionTime.toISOString();
+  // For each active schedule waiting on detection and not yet armed (last_feed null)
+  const { data: waiting, error } = await supabaseAdmin
+    .from('feeding_schedule')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('active', true)
+    .eq('start_on_detection', true)
+    .is('last_feed', null);
+  if (error) return res.status(500).json({ message: 'Failed to query schedules' });
+  for (const sched of waiting ?? []) {
+    const firstInterval = (sched.intervals || [])[0];
+    if (!firstInterval) continue;
+    const nextFeedAt = new Date(detectionTime.getTime() + firstInterval * 3600000).toISOString();
+    await supabaseAdmin.from('feeding_schedule').update({ last_feed: detectionIso, next_feed_at: nextFeedAt, sequence_index: 0 }).eq('id', sched.id);
+  }
+  return res.json({ armed: waiting?.length || 0 });
+});
+
 // History endpoint
 app.get('/api/history', auth, async (req, res) => {
   const userId = (req as any).user.id;
@@ -327,10 +402,16 @@ app.post('/api/cron/trigger', async (req, res) => {
   const nowIso = now.toISOString();
   const fiveMinAgoIso = new Date(now.getTime() - 5 * 60000).toISOString();
 
+  // Fetch schedules where next_feed_at within window
   const { data: schedules, error } = await supabaseAdmin
     .from('feeding_schedule')
     .select('*')
     .eq('active', true)
+
+    .not('next_feed_at', 'is', null)
+    .lte('next_feed_at', nowIso)
+    .gte('next_feed_at', fiveMinAgoIso);
+=======
     .lte('next_time', nowIso)
     .gte('next_time', fiveMinAgoIso);
 
@@ -340,6 +421,7 @@ app.post('/api/cron/trigger', async (req, res) => {
   }
 
   for (const s of schedules ?? []) {
+    // Record feed
     await supabaseAdmin.from('feeding_history').insert({
       user_id: s.user_id,
       feeding_time: nowIso,
@@ -348,6 +430,21 @@ app.post('/api/cron/trigger', async (req, res) => {
     });
     await supabaseAdmin.from('device_status')
       .upsert({ user_id: s.user_id, device_id: `device_${s.user_id}`, status: 'online', last_fed: nowIso }, { onConflict: 'user_id' });
+    // Compute next in sequence
+    const intervals: number[] = s.intervals || [];
+    if (intervals.length) {
+      const nextIndex = (s.sequence_index + 1) % intervals.length;
+      const hours = intervals[nextIndex];
+      const nextFeedAt = new Date(Date.now() + hours * 3600000).toISOString();
+      await supabaseAdmin.from('feeding_schedule').update({
+        last_feed: nowIso,
+        next_feed_at: nextFeedAt,
+        sequence_index: nextIndex
+      }).eq('id', s.id);
+    } else {
+      // No intervals -> disable next
+      await supabaseAdmin.from('feeding_schedule').update({ last_feed: nowIso, next_feed_at: null }).eq('id', s.id);
+    }
 
     // advance next_time for interval schedules
     let next_time: string | null = null;
