@@ -16,7 +16,7 @@ const menuItems = [
   { title: "Schedule", url: "/schedule", icon: Calendar },
   { title: "History", url: "/history", icon: History },
   { title: "Camera", url: "/camera", icon: Camera },
-  { title: "Profile", url: "/profile", icon: User },
+  // Profile removed from sidebar menu — accessible via top-right profile icon
 ];
 
 export function AppSidebar() {

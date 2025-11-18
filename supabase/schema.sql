@@ -7,6 +7,14 @@ create table if not exists public.feeding_schedule (
   user_id uuid not null references auth.users(id) on delete cascade,
   -- Legacy single time field (kept for backward compatibility / historical reference)
   time timestamptz not null,
+  -- time is optional now; interval-based schedules can start on detection
+  time timestamptz null,
+  -- next_time is the actionable timestamp used by cron
+  next_time timestamptz null,
+  -- interval-based fields
+  intervals jsonb null, -- e.g. [4,6,8]
+  interval_index integer not null default 0,
+  start_on_detect boolean not null default false,
   portion integer not null check (portion > 0 and portion <= 10),
   active boolean not null default true,
   -- New interval sequence based scheduling fields
@@ -62,6 +70,7 @@ create policy "own_device_status_all" on public.device_status
 create index if not exists idx_feeding_schedule_user_id on public.feeding_schedule(user_id);
 create index if not exists idx_feeding_schedule_time on public.feeding_schedule(time);
 create index if not exists idx_feeding_schedule_next_feed_at on public.feeding_schedule(next_feed_at);
+create index if not exists idx_feeding_schedule_next_time on public.feeding_schedule(next_time);
 create index if not exists idx_feeding_history_user_id on public.feeding_history(user_id);
 create index if not exists idx_feeding_history_time on public.feeding_history(feeding_time);
 create index if not exists idx_device_status_user_id on public.device_status(user_id);

@@ -154,7 +154,11 @@ app.get('/api/schedule', auth, async (req, res) => {
 
 app.post('/api/schedule', auth, async (req, res) => {
   const userId = (req as any).user.id;
+
   const { portion, active, intervals, start_on_detection, initial_start_time } = req.body ?? {};
+
+  const { time, intervals, start_on_detect, portion, active } = req.body ?? {};
+
   const p = Number(portion);
   if (!Number.isFinite(p) || p < 1 || p > 10) {
     return res.status(400).json({ message: 'Portion 1..10' });
@@ -187,6 +191,32 @@ app.post('/api/schedule', auth, async (req, res) => {
     last_feed: lastFeed,
     next_feed_at: nextFeedAt
   };
+
+  let next_time: string | null = null;
+  let intervalsJson: any = null;
+  let startOnDetect = Boolean(start_on_detect);
+
+  if (Array.isArray(intervals) && intervals.length) {
+    const valid = intervals.every((n: any) => Number.isFinite(Number(n)) && Number(n) > 0);
+    if (!valid) return res.status(400).json({ message: 'Intervals must be positive numbers (hours)' });
+    intervalsJson = JSON.stringify(intervals.map((n: any) => Number(n)));
+    if (startOnDetect) {
+      next_time = null; // wait for camera detection to start
+    } else if (time) {
+      next_time = time; // start from provided time
+    } else {
+      return res.status(400).json({ message: 'Provide start time or enable start_on_detect for interval schedule' });
+    }
+  } else {
+    // legacy: time-based single schedule
+    if (!time) return res.status(400).json({ message: 'Time is required' });
+    next_time = time;
+    startOnDetect = false;
+  }
+
+  const insertObj: any = { user_id: userId, time: time ?? null, next_time, portion: p, active: Boolean(active), start_on_detect: startOnDetect };
+  if (intervalsJson) insertObj.intervals = intervalsJson;
+
   const { data, error } = await supabaseAdmin
     .from('feeding_schedule')
     .insert(insertObj)
@@ -200,6 +230,8 @@ app.put('/api/schedule/:id', auth, async (req, res) => {
   const userId = (req as any).user.id;
   const { id } = req.params;
   const updates: any = {};
+  const body = req.body ?? {};
+  if (body.time !== undefined) updates.time = body.time || null;
   if (req.body?.portion !== undefined) {
     const p = Number(req.body.portion);
     if (!Number.isFinite(p) || p < 1 || p > 10) return res.status(400).json({ message: 'Portion 1..10' });
@@ -225,6 +257,52 @@ app.put('/api/schedule/:id', auth, async (req, res) => {
     if (intervals.length) {
       updates.next_feed_at = new Date(base.getTime() + intervals[0] * 3600000).toISOString();
       updates.sequence_index = 0;
+  if (body.active !== undefined) updates.active = Boolean(body.active);
+
+  // intervals update
+  let intervalsArr: number[] | null = null;
+  if (body.intervals !== undefined) {
+    if (Array.isArray(body.intervals) && body.intervals.length) {
+      const valid = body.intervals.every((n: any) => Number.isFinite(Number(n)) && Number(n) > 0);
+      if (!valid) return res.status(400).json({ message: 'Intervals must be positive numbers (hours)' });
+      intervalsArr = body.intervals.map((n: any) => Number(n));
+      updates.intervals = JSON.stringify(intervalsArr);
+      // reset index when intervals change
+      updates.interval_index = 0;
+    } else {
+      // clearing intervals
+      updates.intervals = null;
+      updates.interval_index = 0;
+    }
+  }
+  if (body.start_on_detect !== undefined) updates.start_on_detect = Boolean(body.start_on_detect);
+
+  // recompute next_time logic
+  if ('time' in updates || intervalsArr !== null || 'start_on_detect' in updates) {
+    // fetch current row for context
+    const { data: current, error: curErr } = await supabaseAdmin
+      .from('feeding_schedule')
+      .select('*')
+      .eq('id', id)
+      .eq('user_id', userId)
+      .single();
+    if (curErr || !current) return res.status(404).json({ message: 'Schedule not found' });
+
+    const nextIntervals = intervalsArr ?? (current.intervals ? JSON.parse(current.intervals as any) : null);
+    const nextStartOnDetect = 'start_on_detect' in updates ? updates.start_on_detect : current.start_on_detect;
+    const nextTime = 'time' in updates ? updates.time : current.time;
+
+    if (nextIntervals && nextIntervals.length) {
+      if (nextStartOnDetect) {
+        updates.next_time = null; // wait for detection
+      } else if (nextTime) {
+        updates.next_time = nextTime;
+      } else {
+        return res.status(400).json({ message: 'Provide start time or enable start_on_detect for interval schedule' });
+      }
+    } else {
+      // legacy time-based
+      updates.next_time = nextTime ?? null;
     }
   }
 
@@ -287,6 +365,22 @@ app.get('/api/history', auth, async (req, res) => {
   return res.json(data ?? []);
 });
 
+// Camera detection hook: start interval schedules waiting for detection
+app.post('/api/camera/detected', auth, async (req, res) => {
+  const userId = (req as any).user.id;
+  const nowIso = new Date().toISOString();
+  const { error } = await supabaseAdmin
+    .from('feeding_schedule')
+    .update({ next_time: nowIso })
+    .eq('user_id', userId)
+    .eq('active', true)
+    .eq('start_on_detect', true)
+    .is('next_time', null)
+    .not('intervals', 'is', null);
+  if (error) return res.status(500).json({ message: 'Failed to mark detection' });
+  return res.json({ started: true, at: nowIso });
+});
+
 // Status endpoint
 app.get('/api/status', auth, async (req, res) => {
   const userId = (req as any).user.id;
@@ -313,9 +407,13 @@ app.post('/api/cron/trigger', async (req, res) => {
     .from('feeding_schedule')
     .select('*')
     .eq('active', true)
+
     .not('next_feed_at', 'is', null)
     .lte('next_feed_at', nowIso)
     .gte('next_feed_at', fiveMinAgoIso);
+=======
+    .lte('next_time', nowIso)
+    .gte('next_time', fiveMinAgoIso);
 
   if (error) {
     console.error(error);
@@ -347,6 +445,30 @@ app.post('/api/cron/trigger', async (req, res) => {
       // No intervals -> disable next
       await supabaseAdmin.from('feeding_schedule').update({ last_feed: nowIso, next_feed_at: null }).eq('id', s.id);
     }
+
+    // advance next_time for interval schedules
+    let next_time: string | null = null;
+    let next_index = Number(s.interval_index ?? 0);
+    if (s.intervals) {
+      try {
+        const arr = Array.isArray(s.intervals) ? s.intervals : JSON.parse(s.intervals as any);
+        if (Array.isArray(arr) && arr.length) {
+          const hours = Number(arr[next_index % arr.length]) || 0;
+          const base = new Date(s.next_time || nowIso);
+          const next = new Date(base.getTime() + hours * 3600000);
+          next_time = next.toISOString();
+          next_index = (next_index + 1) % arr.length;
+        }
+      } catch {}
+    }
+    // for legacy (no intervals), leave next_time as-is or null it to avoid retrigger; here we null it
+    const upd: any = { next_time };
+    if (s.intervals) upd.interval_index = next_index;
+    await supabaseAdmin
+      .from('feeding_schedule')
+      .update(upd)
+      .eq('id', s.id)
+      .eq('user_id', s.user_id);
   }
 
   return res.json({ message: 'Cron job executed', processed: (schedules ?? []).length });

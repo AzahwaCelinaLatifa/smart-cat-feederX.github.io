@@ -14,9 +14,11 @@
   --elevate-1: rgba(0,0,0, .03);
   --elevate-2: rgba(0,0,0, .08);
 
-  --background: 70.91 21.57% 90%;
+  /* Palette tuned to match the provided design: warm cream page background, soft pink hero and deep navy accents */
+  /* slightly warmer cream background similar to the reference image */
+  --background: 38 60% 98%; /* very light cream */
 
-  --foreground: 0 0% 8.24%;
+  --foreground: 220 10% 12%; /* deep navy-ish text */
 
   --border: 35 10.53% 77.65%;
 
@@ -48,9 +50,11 @@
 
   --popover-border: 220 13% 85%;
 
-  --primary: 165.65 26.44% 65.88%;
+  /* Primary as deep navy used for strong bands / CTA backgrounds */
+  /* deep navy used for strong bands / CTA backgrounds */
+  --primary: 222 20% 14%; /* slightly darker navy */
 
-  --primary-foreground: 0 0% 8.24%;
+  --primary-foreground: 0 0% 100%; /* white text on primary */
 
   --secondary: 0 0% 8.24%;
 
@@ -60,9 +64,10 @@
 
   --muted-foreground: 72 2.39% 40.98%;
 
-  --accent: 292.13 48.03% 75.1%;
+  /* Accent used for the warm pink/peach hero */
+  --accent: 340 70% 92%; /* soft rosy-pink */
 
-  --accent-foreground: 0 0% 8.24%;
+  --accent-foreground: 220 10% 12%; /* dark text on light accent */
 
   --destructive: 0.49 54.19% 55.49%;
 
@@ -76,8 +81,8 @@
   --chart-4: 147.1429 78.5047% 41.9608%;
   --chart-5: 341.4894 75.2000% 50.9804%;
 
-  --font-sans: 'Inter', sans-serif;
-  --font-serif: 'Source Serif Pro', serif;
+  --font-sans: 'Poppins', sans-serif;
+  --font-serif: 'Playfair Display', serif;
   --font-mono: 'IBM Plex Mono', monospace;
   --radius: 0.875rem; /* 8px */
   --shadow-2xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00);
@@ -243,8 +248,44 @@
     @apply border-border;
   }
 
+  /* Page-level decorative background and global type settings */
   body {
     @apply font-sans antialiased bg-background text-foreground;
+    /* soft radial texture + subtle linear gradient to mimic the gentle paper feel */
+    background-image: radial-gradient(circle at 10% 10%, rgba(255,255,255,0.6), transparent 8%), linear-gradient(180deg, rgba(255,250,248,0.6), transparent 40%);
+    background-blend-mode: overlay;
+  }
+
+  /* Global content top spacing so UI elements don't sit too close to the viewport top */
+  #root {
+    padding-top: 2rem;
+  }
+
+  /* Decorative background shapes (non-functional, purely visual) */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: -10% -10% auto -10%;
+    height: 36vh;
+    background: linear-gradient(90deg, hsl(var(--accent) / 0.65), transparent 60%);
+    filter: blur(24px);
+    z-index: 0;
+    pointer-events: none;
+    transform: translateY(-6vh);
+    border-bottom-left-radius: 50% 18%;
+  }
+  body::after {
+    /* subtle large navy band at the bottom edge, like the footer block in the design */
+    content: "";
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 8vh;
+    background: hsl(var(--primary));
+    opacity: 0.04;
+    z-index: 0;
+    pointer-events: none;
   }
 }
 
@@ -321,4 +362,401 @@
   .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
     inset: -1px;
   }
+
+  /* Hero / landing visuals to approximate the supplied design */
+  .hero-landing {
+    background: linear-gradient(180deg, hsl(var(--accent)), rgba(255,255,255,0));
+    color: hsl(var(--accent-foreground));
+    position: relative;
+    z-index: 10; /* keep hero content above decorative shapes */
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
+  }
+
+  /* Hero heading style to match large serif headline in reference */
+  .hero-landing h1,
+  .hero-landing h2 {
+    font-family: var(--font-serif);
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+    font-weight: 700;
+    color: hsl(var(--foreground));
+  }
+
+  .hero-landing h1 {
+    font-size: clamp(2rem, 6vw, 4rem);
+  }
+
+  /* Decorative navy band used in various sections */
+  .navy-band {
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    position: relative;
+    z-index: 8;
+    /* gentle top scallop effect using background-size to leave space for visual separation */
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-size: 100% 2.2rem;
+  }
+
+  /* Animated cat preview shown above the login card */
+  .login-cat {
+    width: 110px;
+    height: auto;
+    display: block;
+    transform-origin: 50% 80%;
+  }
+
+  /* The group inside the SVG that actually moves - smoother peek animation */
+  .login-cat { z-index: 50; width: 140px; height: auto; }
+  .login-card { overflow: visible; }
+
+  .login-cat .cat-head {
+    transform-origin: 70px 80px;
+    /* longer peek but with a much faster appear (reduce hidden delay) */
+    animation: cat-peek-smooth 5200ms cubic-bezier(.22,.9,.3,1) infinite;
+  }
+
+  @keyframes cat-peek-smooth {
+    /* start hidden -> appear quickly (fast entry) */
+    0% { transform: translateY(40px) scale(0.92) rotate(-6deg); opacity: 0; }
+    4% { transform: translateY(18px) scale(0.95) rotate(-6deg); opacity: 1; }
+    18% { transform: translateY(4px) scale(0.99) rotate(-6deg); }
+    26% { transform: translateY(0px) scale(1) rotate(-6deg); }
+    /* hold visible */
+    72% { transform: translateY(0px) scale(1) rotate(-6deg); }
+    /* quick exit */
+    84% { transform: translateY(10px) scale(0.98) rotate(-6deg); }
+    92% { transform: translateY(40px) scale(0.92) rotate(-6deg); opacity: 0; }
+    100% { transform: translateY(40px) scale(0.92) rotate(-6deg); opacity: 0; }
+  }
+
+  /* Respect user motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    .login-cat .cat-head,
+    .login-cat .cat-eye-group,
+    .login-cat .cat-whiskers .whisk,
+    .login-cat .cat-ear { animation: none !important; }
+  }
+
+  @media (max-width: 420px) {
+    .login-cat { width: 96px; }
+  }
+
+  /* Ensure page/menu titles have at least 1cm gap from the element above */
+  /* Targets common heading sizes used across pages to avoid layout collisions */
+  .max-w-6xl h1,
+  h1[class*="text-3xl"],
+  h1[class*="text-2xl"] {
+    margin-top: 1cm !important;
+  }
+
+  /* Menu / sidebar pressed & active visual tweaks - no structural changes, only visuals */
+  [data-sidebar="menu-button"] {
+    transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease;
+  }
+
+  [data-sidebar="menu-button"]:active {
+    transform: translateY(1px) scale(0.998);
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.08);
+  }
+
+  /* Data-active state (when a menu item is selected) */
+  [data-sidebar="menu-button"][data-active="true"] {
+    /* use accent to match the site's visual language */
+    background: linear-gradient(90deg, hsl(var(--accent)), color-mix(in srgb, hsl(var(--accent)) 85%, transparent));
+    color: hsl(var(--accent-foreground));
+    font-weight: 600;
+  }
+
+  /* Make sure decorative pseudo-elements don't get in the way of content */
+  #root, #root > * { position: relative; z-index: 20; }
+
+  /* Subtle rounded cards to match aesthetic */
+  .soft-card {
+    background: hsl(var(--card));
+    border-radius: var(--radius);
+    box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+  }
+
+  /* Bottom navigation visual from reference image: black blob with elevated central action */
+  .bottom-nav {
+    background: transparent; /* we'll render our own decorative blob */
+    border-top: none;
+  }
+
+  .bottom-nav::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 6px;
+    width: min(560px, 92%);
+    height: 70px;
+    background: hsl(var(--primary)); /* use site primary (navy) */
+    border-radius: 40px;
+    box-shadow: 0 12px 30px hsl(var(--primary) / 0.35);
+    z-index: 40;
+    pointer-events: none;
+  }
+
+
+  /* Base nav item: sit slightly above the blob and show white icons by default */
+  .bottom-nav > div > a button.nav-item {
+    background: transparent;
+    height: 56px;
+    min-width: 56px;
+    border-radius: 12px;
+    z-index: 45;
+    position: relative;
+    transform: translateY(-8px);
+    transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+  }
+
+  .bottom-nav > div > a button.nav-item svg {
+    transition: color 120ms ease, transform 120ms ease;
+    color: white; /* icons are white to contrast with the dark blob */
+  }
+
+  /* Active nav item: orange circular action that floats above others */
+  .bottom-nav > div > a button.nav-item.active {
+    transform: translateY(-18px) scale(1.02);
+    width: 68px;
+    height: 68px;
+    border-radius: 9999px;
+    padding: 0;
+    /* use site accent color for active action */
+    background: linear-gradient(180deg, hsl(var(--accent)) 0%, color-mix(in srgb, hsl(var(--accent)) 85%, black 15%));
+    box-shadow: 0 10px 22px rgba(0,0,0,0.22), inset 0 -6px 12px rgba(0,0,0,0.06);
+    z-index: 50;
+  }
+
+  .bottom-nav > div > a button.nav-item.active svg {
+    color: white; /* icon remains white on orange background */
+  }
+
+  /* Pressed effect for active item */
+  .bottom-nav > div > a button.nav-item:active {
+    transform: translateY(-12px) scale(0.98);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2), inset 0 6px 12px rgba(0,0,0,0.18);
+    filter: saturate(1.03) brightness(0.98);
+  }
+
+  /* ensure bottom nav sits above decorative body pseudo-elements */
+  .bottom-nav { z-index: 60; }
+
+  /* Responsive adjustments - keep all changes purely visual and non-functional */
+  @media (max-width: 768px) {
+    /* compress hero spacing and center content on small screens */
+    .hero-landing {
+      padding-top: 2rem;
+      padding-bottom: 2rem;
+      text-align: center;
+    }
+
+    .hero-landing h1 {
+      font-size: clamp(1.6rem, 8vw, 2.6rem);
+      line-height: 1.05;
+    }
+
+    /* make sure images are fluid */
+    img, .soft-card img, picture img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* make soft cards full-bleed with small margins */
+    .soft-card {
+      margin: 0 1rem;
+    }
+
+    /* reduce navy band height and padding on small screens */
+    .navy-band {
+      background-size: 100% 1.2rem;
+      padding: 0.75rem 0.75rem;
+    }
+
+    /* Make main content breathe on small screens */
+    #root, main, [data-slot="sidebar-inset"] {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+
+    /* Ensure sidebar collapses fully on small screens (visual only) */
+    [data-slot="sidebar-wrapper"] {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    /* History / Analytics segmented toggle: make full-width and buttons flexible */
+    [role="tablist"][aria-label="History view"] {
+      width: 100%;
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.25rem;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+
+    [role="tablist"][aria-label="History view"] > button {
+      flex: 1 1 0;
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    /* Range selector (Analytics) - allow wrapping so the small buttons don't overflow */
+    [role="tablist"][aria-label="Range selector"] {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      align-items: center;
+    }
+
+    [role="tablist"][aria-label="Range selector"] > button {
+      flex: 1 1 auto;
+      min-width: 64px;
+      padding: 0.375rem 0.6rem;
+      font-size: 0.875rem;
+    }
+
+    /* Make list cards stack their content vertically for narrow screens */
+    /* Target the card content layout using attribute selectors to be more robust */
+    [class*="items-center"][class*="justify-between"][class*="p-4"] {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.5rem;
+    }
+
+    [class*="items-center"][class*="justify-between"][class*="p-4"] > [class*="gap-4"] {
+      /* keep the time & dot area aligned */
+      align-items: center;
+    }
+
+    [class*="items-center"][class*="justify-between"][class*="p-4"] > [class*="gap-3"] {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    /* Reduce top padding on root for small screens so hero stays visible but not cramped */
+    #root { padding-top: 1.25rem; }
+  }
+
+  @media (max-width: 420px) {
+    .hero-landing {
+      padding-top: 1.25rem;
+      padding-bottom: 1.25rem;
+    }
+
+    .hero-landing h1 {
+      font-size: clamp(1.25rem, 9.5vw, 1.9rem);
+    }
+
+    /* Slightly smaller clickable areas to fit narrow screens without changing behavior */
+    [data-sidebar="menu-button"] {
+      padding: 0.55rem !important;
+    }
+
+    /* reduce footer/nav large paddings on tiny screens */
+    .navy-band, footer, header {
+      padding-left: 0.6rem;
+      padding-right: 0.6rem;
+    }
+
+    /* Further reduce top spacing on very small screens */
+    #root { padding-top: 0.75rem; }
+  }
 }
+
+/* Login page gradient background to match site style */
+.login-gradient {
+  /* Layered gradient using site variables: a soft accent radial glow + diagonal navy wash */
+  min-height: 100vh;
+  /* left-corner accent: small intense glow + medium soft glow + larger ambient glow + diagonal wash */
+  background-image:
+    radial-gradient(120px at 3% 6%, hsl(var(--accent) / 0.72), transparent 35%),
+    radial-gradient(480px at 6% 10%, hsl(var(--accent) / 0.60), transparent 30%),
+    radial-gradient(700px at 18% 22%, hsl(var(--accent) / 0.22), transparent 28%),
+    linear-gradient(135deg, hsl(var(--accent) / 0.12) 0%, hsl(var(--primary) / 0.04) 100%);
+  background-blend-mode: screen, normal;
+  background-repeat: no-repeat;
+  background-size: cover;
+  /* subtle overlay to tie into the paper texture already applied to body */
+  filter: none;
+}
+
+/* Card-level gradient for the login form itself. Uses CSS variables so it's theme-aware and easy to tweak */
+.login-card {
+  background: linear-gradient(135deg, hsl(var(--accent) / 0.22), hsl(var(--primary) / 0.06));
+  /* softly lift the card content with a faint inner highlight */
+  box-shadow: none !important;
+  border: 1px solid hsl(var(--card-border) / 0.6);
+  backdrop-filter: blur(4px) saturate(120%);
+}
+
+/* When the login page is active, hide any bottom-nav decorative shadows / blobs */
+/* Hide bottom-nav decorative blob and its shadow while login is active */
+.login-active .bottom-nav,
+.login-active .bottom-nav::before {
+  display: none !important;
+  box-shadow: none !important;
+}
+
+/* Hide page-level decorative pseudo-elements and large decorative bands on login */
+body.login-active::before,
+body.login-active::after,
+body.login-active .navy-band,
+body.login-active .hero-landing::before,
+body.login-active .hero-landing::after {
+  display: none !important;
+  content: none !important;
+}
+
+  /* Enhanced cat styling: eyes, pupils, whisker movement and blink animation */
+  .login-cat .cat-ear { transform-origin: center bottom; }
+  .login-cat .cat-ear--left { animation: ear-tilt-left 5200ms ease-in-out infinite; }
+  .login-cat .cat-ear--right { animation: ear-tilt-right 5200ms ease-in-out infinite; }
+
+  .login-cat .cat-face { /* slight sheen to break up flat black */
+    fill: #0b0b0b;
+  }
+
+  /* Eyes: group scaling on Y to blink smoothly */
+  .login-cat .cat-eye-group { transform-origin: 70px 56px; /* slower blink to match longer peek, but blink while visible */ animation: cat-blink-smooth 5200ms cubic-bezier(.2,.8,.2,1) infinite; }
+  .login-cat .eye-white { transform-origin: center; }
+  .login-cat .eye-pupil { transform-origin: center; transition: transform 180ms linear; }
+
+  @keyframes cat-blink-smooth {
+    /* place blinks during the visible window so they are seen */
+    0%, 28%, 38%, 70%, 80%, 100% { transform: scaleY(1); }
+    30% { transform: scaleY(0.14); }
+    32% { transform: scaleY(1); }
+    76% { transform: scaleY(0.14); }
+    78% { transform: scaleY(1); }
+  }
+
+  /* whisker twitch timed with peek for liveliness */
+  .login-cat .cat-whiskers .whisk { transform-origin: center right; /* keep whisker twitch aligned with peek timing */ animation: whisker-twitch 5200ms ease-in-out infinite; }
+
+  @keyframes whisker-twitch {
+    0%, 14%, 60%, 100% { transform: translateX(0) rotate(0deg); }
+    16% { transform: translateX(-1px) rotate(-1deg); }
+    48% { transform: translateX(1px) rotate(1deg); }
+  }
+
+  /* subtle ear tilt */
+  @keyframes ear-tilt-left {
+    0%, 30%, 100% { transform: rotate(0deg); }
+    15% { transform: rotate(-6deg); }
+  }
+  @keyframes ear-tilt-right {
+    0%, 30%, 100% { transform: rotate(0deg); }
+    15% { transform: rotate(6deg); }
+  }

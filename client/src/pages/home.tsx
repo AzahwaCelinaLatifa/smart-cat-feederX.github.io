@@ -37,6 +37,17 @@ export default function Home() {
 
   return (
     <div className="space-y-6">
+      {/* Hero / visual header (purely presentational) */}
+      <section className="hero-landing rounded-lg overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 py-12 md:py-20">
+          <div className="md:flex md:items-center md:justify-between">
+            <div className="md:flex-1">
+              {/* Promotional copy removed per request. Hero remains decorative only. */}
+            </div>
+          </div>
+        </div>
+      </section>
+
       <div>
         <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
         <p className="text-muted-foreground mt-1">Monitor your cat's feeding status</p>
