@@ -108,6 +108,11 @@ export default function Control() {
               onClick={handleFeedNow} 
               data-testid="button-confirm-manual-feed"
               disabled={loading}
+              style={{
+                backgroundColor: '#174143',
+                color: 'white'
+              }}
+              className="hover:opacity-90"
             >
               Confirm
             </AlertDialogAction>

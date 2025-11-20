@@ -9,8 +9,9 @@ export const NotificationIcon: React.FC<NotificationIconProps> = ({ className = 
     <svg 
       xmlns="http://www.w3.org/2000/svg" 
       viewBox="0 0 24 24" 
-      fill="currentColor"
+      fill="#174143"
       className={className}
+      style={{ filter: 'brightness(0) saturate(100%) invert(13%) sepia(18%) saturate(1943%) hue-rotate(138deg) brightness(96%) contrast(93%)' }}
     >
       <path 
         fillRule="evenodd" 

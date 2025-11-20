@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export default function Camera() {
   return (
-    <div className="space-y-6" style={{marginTop: '0', paddingTop: '0'}}>
+    <div className="space-y-6" style={{marginTop: '-20px', paddingTop: '0'}}>
       <div style={{marginTop: '0', paddingTop: '0'}}>
         <h1 
           className="text-3xl font-bold text-foreground"
@@ -28,7 +28,7 @@ export default function Camera() {
             fontWeight: 600,
             lineHeight: 'normal',
             letterSpacing: '0.42px',
-            marginTop: '2px'
+            marginTop: '10px'
           }}
         >
           Monitor your pet in real-time with AI detection

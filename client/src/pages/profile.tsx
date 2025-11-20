@@ -98,7 +98,7 @@ export default function Profile() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-4 sm:px-6 lg:px-8" style={{ height: '100%', overflowY: 'auto', overflowX: 'hidden', paddingBottom: '100px', maxWidth: '100%' }}>
       <div>
         <h1 
           className="text-3xl font-bold text-foreground"
@@ -138,7 +138,7 @@ export default function Profile() {
           }}
         >
           <img 
-            src="/assets/solar_cat-broken.png" 
+            src="/assets/solar_cat-outline.svg" 
             alt="Cat Profile" 
             className="w-full h-full object-cover"
           />
@@ -146,17 +146,24 @@ export default function Profile() {
       </div>
 
       {/* Pet Name di bawah avatar */}
-      <div className="flex justify-center mb-6">
+      <div className="flex justify-center mb-6" style={{ marginTop: '0px' }}>
         {isEditing ? (
           <Input
             value={petName}
             onChange={(e) => setPetName(e.target.value)}
             data-testid="input-pet-name"
-            className="w-48 text-center text-xl font-semibold"
             style={{
-              fontFamily: 'Poppins',
+              width: '145px',
+              height: '36px',
+              borderRadius: '20px',
+              border: '0.5px solid #797979',
+              paddingLeft: '15px',
               color: '#174143',
-              border: '2px solid #174143'
+              fontFamily: 'Montserrat',
+              fontSize: '14px',
+              fontWeight: 600,
+              letterSpacing: '0.42px',
+              backgroundColor: 'transparent'
             }}
           />
         ) : (
@@ -164,8 +171,15 @@ export default function Profile() {
             className="text-xl font-semibold" 
             data-testid="text-pet-name"
             style={{
+              color: '#174143',
+              textAlign: 'center',
               fontFamily: 'Poppins',
-              color: '#174143'
+              fontSize: '28px',
+              fontStyle: 'normal',
+              fontWeight: 600,
+              lineHeight: 'normal',
+              letterSpacing: '0.84px',
+              width: '145px'
             }}
           >
             {petName}
@@ -174,17 +188,49 @@ export default function Profile() {
       </div>
 
       <Card 
-        className="mx-auto"
+        className="mx-auto w-full max-w-[347px] px-4 sm:px-0"
         style={{
-          width: '347px',
-          height: '181px',
+          height: 'auto',
           flexShrink: 0,
           borderRadius: '30px',
           border: '1px solid rgba(0, 0, 0, 0.08)',
-          background: 'linear-gradient(180deg, #F5E5E1 7.21%, #FFF6F4 100%)'
+          background: 'linear-gradient(180deg, #F5E5E1 7.21%, #FFF6F4 100%)',
+          position: 'relative',
+          paddingBottom: '20px'
         }}
       >
-        <CardContent style={{padding: '20px'}}>
+        <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '8px' }}>
+          {!isEditing ? (
+            <Button
+              onClick={startEdit}
+              size="icon"
+              variant="ghost"
+              style={{ width: '32px', height: '32px', padding: 0 }}
+            >
+              <img src="/assets/lucide_pen-line.svg" alt="Edit" className="h-4 w-4" style={{ filter: 'brightness(0) saturate(100%) invert(13%) sepia(18%) saturate(1943%) hue-rotate(138deg) brightness(96%) contrast(93%)' }} />
+            </Button>
+          ) : (
+            <>
+              <Button
+                onClick={saveNames}
+                size="icon"
+                variant="ghost"
+                style={{ width: '32px', height: '32px', padding: 0 }}
+              >
+                <Check className="h-4 w-4" style={{ color: '#4CAF50' }} />
+              </Button>
+              <Button
+                onClick={cancelEdit}
+                size="icon"
+                variant="ghost"
+                style={{ width: '32px', height: '32px', padding: 0 }}
+              >
+                <img src="/assets/stash_times.svg" alt="Cancel" className="h-4 w-4" style={{ filter: 'brightness(0) saturate(100%) invert(31%) sepia(13%) saturate(1654%) hue-rotate(332deg) brightness(92%) contrast(90%)' }} />
+              </Button>
+            </>
+          )}
+        </div>
+        <CardContent style={{padding: '20px 20px 0 20px'}}>
           <div className="flex flex-col gap-4">
             <div>
               <p 
@@ -205,13 +251,25 @@ export default function Profile() {
                   value={ownerName}
                   onChange={(e) => setOwnerName(e.target.value)}
                   data-testid="input-owner-name"
-                  className="w-48"
+                  className="w-full max-w-[291px]"
+                  style={{
+                    height: '36px',
+                    borderRadius: '20px',
+                    border: '0.5px solid #797979',
+                    paddingLeft: '15px',
+                    color: '#174143',
+                    fontFamily: 'Montserrat',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    letterSpacing: '0.42px',
+                    backgroundColor: 'transparent'
+                  }}
                 />
               ) : (
                 <div 
                   data-testid="text-owner-name"
+                  className="w-full max-w-[291px]"
                   style={{
-                    width: '291px',
                     height: '36px',
                     flexShrink: 0,
                     borderRadius: '20px',
@@ -226,7 +284,7 @@ export default function Profile() {
                     fontWeight: 600,
                     lineHeight: 'normal',
                     letterSpacing: '0.42px',
-                    backgroundColor: 'white'
+                    backgroundColor: 'transparent'
                   }}
                 >
                   {ownerName}
@@ -242,33 +300,28 @@ export default function Profile() {
                   fontStyle: 'normal',
                   fontWeight: 600,
                   lineHeight: 'normal',
-                  letterSpacing: '0.42px'
+                  letterSpacing: '0.42px',
+                  marginBottom: '8px'
                 }}
               >
                 Email
               </p>
-              <div 
-                data-testid="text-email"
-                style={{
-                  width: '291px',
-                  height: '36px',
-                  flexShrink: 0,
-                  borderRadius: '20px',
-                  border: '0.5px solid #797979',
-                  display: 'flex',
-                  alignItems: 'center',
-                  paddingLeft: '15px',
-                  color: '#174143',
-                  fontFamily: 'Montserrat',
-                  fontSize: '14px',
-                  fontStyle: 'normal',
-                  fontWeight: 600,
-                  lineHeight: 'normal',
-                  letterSpacing: '0.42px',
-                  backgroundColor: 'white'
-                }}
-              >
-                {user?.email ?? '—'}
+              <div className="flex items-center gap-3">
+                <img src="/assets/eva_email-outline.svg" alt="Email" style={{ width: '20px', height: '20px', flexShrink: 0, aspectRatio: '1/1', filter: 'brightness(0) saturate(100%) invert(13%) sepia(18%) saturate(1943%) hue-rotate(138deg) brightness(96%) contrast(93%)' }} />
+                <div 
+                  data-testid="text-email"
+                  style={{
+                    color: '#174143',
+                    fontFamily: 'Montserrat',
+                    fontSize: '14px',
+                    fontStyle: 'normal',
+                    fontWeight: 600,
+                    lineHeight: 'normal',
+                    letterSpacing: '0.42px'
+                  }}
+                >
+                  {user?.email ?? '—'}
+                </div>
               </div>
             </div>
           </div>
@@ -276,9 +329,8 @@ export default function Profile() {
       </Card>
 
       <Card 
-        className="mx-auto"
+        className="mx-auto w-full max-w-[347px]"
         style={{
-          width: '347px',
           height: '181px',
           flexShrink: 0,
           borderRadius: '30px',
@@ -307,52 +359,53 @@ export default function Profile() {
         </CardHeader>
         <CardContent style={{padding: '10px 20px 0px 20px'}}>
           <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-3">
-              <Bell className="h-8 w-8 text-muted-foreground" />
-              <Label 
-                htmlFor="notifications" 
-                style={{
-                  width: '253px',
-                  height: '17px',
-                  flexShrink: 0,
-                  color: '#174143',
-                  textAlign: 'left',
-                  fontFamily: 'Montserrat',
-                  fontSize: '13px',
-                  fontStyle: 'normal',
-                  fontWeight: 500,
-                  lineHeight: 'normal',
-                  letterSpacing: '0.39px'
-                }}
-              >
-                Push Notifications
-              </Label>
-              <Switch
-                id="notifications"
-                checked={notificationsEnabled}
-                onCheckedChange={handleNotificationsToggle}
-                data-testid="switch-notifications"
-                style={{marginLeft: '-20px'}}
-              />
-            </div>
-
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Globe className="h-5 w-5 text-muted-foreground" />
+                <img src="/assets/pajamas_notifications.svg" alt="Notifications" style={{ width: '20px', height: '20px', flexShrink: 0, aspectRatio: '1/1', filter: 'brightness(0) saturate(100%) invert(13%) sepia(18%) saturate(1943%) hue-rotate(138deg) brightness(96%) contrast(93%)' }} />
                 <Label 
-                  htmlFor="language" 
+                  htmlFor="notifications" 
                   style={{
-                    width: '253px',
                     height: '17px',
                     flexShrink: 0,
                     color: '#174143',
                     textAlign: 'left',
                     fontFamily: 'Montserrat',
-                    fontSize: '13px',
+                    fontSize: '14px',
                     fontStyle: 'normal',
-                    fontWeight: 500,
+                    fontWeight: 600,
                     lineHeight: 'normal',
-                    letterSpacing: '0.39px'
+                    letterSpacing: '0.42px'
+                  }}
+                >
+                  Push Notifications
+                </Label>
+              </div>
+              <Switch
+                id="notifications"
+                checked={notificationsEnabled}
+                onCheckedChange={handleNotificationsToggle}
+                data-testid="switch-notifications"
+                style={{ marginLeft: '0' }}
+                className="data-[state=checked]:bg-[#6F8788]"
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <img src="/assets/ic_baseline-language.svg" alt="Language" style={{ width: '20px', height: '20px', flexShrink: 0, filter: 'brightness(0) saturate(100%) invert(13%) sepia(18%) saturate(1943%) hue-rotate(138deg) brightness(96%) contrast(93%)' }} />
+                <Label 
+                  htmlFor="language" 
+                  style={{
+                    height: '17px',
+                    flexShrink: 0,
+                    color: '#174143',
+                    textAlign: 'left',
+                    fontFamily: 'Montserrat',
+                    fontSize: '14px',
+                    fontStyle: 'normal',
+                    fontWeight: 600,
+                    lineHeight: 'normal',
+                    letterSpacing: '0.42px'
                   }}
                 >
                   Language
@@ -361,18 +414,16 @@ export default function Profile() {
               <div 
                 data-testid="text-language"
                 style={{
-                  width: '40px',
                   height: '17px',
                   flexShrink: 0,
                   color: '#174143',
-                  textAlign: 'left',
+                  textAlign: 'right',
                   fontFamily: 'Montserrat',
                   fontSize: '13px',
                   fontStyle: 'normal',
                   fontWeight: 500,
                   lineHeight: 'normal',
-                  letterSpacing: '0.39px',
-                  marginLeft: '-70px'
+                  letterSpacing: '0.39px'
                 }}
               >
                 English
@@ -382,15 +433,29 @@ export default function Profile() {
         </CardContent>
       </Card>
 
-      <div>
+      <div className="mx-auto w-full max-w-[347px]">
         <Button
-          className="w-full border border-input text-destructive hover:text-destructive bg-background"
+          className="w-full border hover:opacity-90 transition-opacity [&>*]:!text-[#815247]"
           onClick={() => setLogoutOpen(true)}
           data-testid="button-logout"
           type="button"
+          style={{
+            height: '50px',
+            borderRadius: '20px',
+            border: '0.5px solid #797979',
+            background: 'white',
+            color: '#815247',
+            textAlign: 'center',
+            fontFamily: 'Montserrat',
+            fontSize: '14px',
+            fontStyle: 'normal',
+            fontWeight: 600,
+            lineHeight: 'normal',
+            letterSpacing: '0.42px'
+          }}
         >
-          <LogOut className="h-4 w-4 mr-2" />
-          Logout
+          <LogOut className="h-5 w-5 mr-2" style={{ color: '#815247', stroke: '#815247' }} />
+          <span style={{ color: '#815247', fontFamily: 'Montserrat', fontSize: '14px', fontWeight: 600, letterSpacing: '0.42px' }}>Log Out</span>
         </Button>
 
         <Dialog open={logoutOpen} onOpenChange={setLogoutOpen}>
@@ -401,8 +466,27 @@ export default function Profile() {
             </DialogHeader>
             <DialogFooter>
               <div className="flex gap-2">
-                <Button variant="ghost" onClick={() => setLogoutOpen(false)}>Cancel</Button>
-                <Button variant="destructive" onClick={confirmLogout}>Log out</Button>
+                <Button 
+                  variant="ghost" 
+                  onClick={() => setLogoutOpen(false)}
+                  style={{
+                    color: '#815247',
+                    borderColor: '#815247'
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={confirmLogout}
+                  style={{
+                    backgroundColor: '#815247',
+                    color: 'white',
+                    borderColor: '#815247'
+                  }}
+                  className="hover:opacity-90"
+                >
+                  Log out
+                </Button>
               </div>
             </DialogFooter>
           </DialogContent>

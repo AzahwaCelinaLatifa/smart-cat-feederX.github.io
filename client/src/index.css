@@ -866,3 +866,48 @@ button .text-white,
 [data-sidebar] .grid {
   margin-right: 1rem;
 }
+
+/* Prevent sidebar icons from shrinking when collapsed */
+.sidebar-icon {
+  flex-shrink: 0 !important;
+}
+
+[data-state="collapsed"] .sidebar-icon,
+[data-collapsible="icon"] .sidebar-icon {
+  width: var(--icon-width) !important;
+  height: var(--icon-height) !important;
+  min-width: var(--icon-width) !important;
+  min-height: var(--icon-height) !important;
+  flex-shrink: 0 !important;
+}
+
+/* Force menu text colors based on active state */
+[data-active="true"] span {
+  color: #174143 !important;
+}
+
+[data-active="false"] span {
+  color: #FFFFFF !important;
+}
+
+/* Responsive utilities */
+@media (max-width: 640px) {
+  .space-y-6 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Notification icon styling */
+.notification-icon {
+  color: #174143;
+  fill: #174143;
+}
+
+/* Responsive card containers */
+@media (max-width: 768px) {
+  [style*="width: '347px'"] {
+    width: 100% !important;
+    max-width: 347px !important;
+  }
+}

@@ -23,11 +23,13 @@ export default function Home() {
   
   // Adjust gap based on sidebar state
   const cardGap = open ? '0.5cm' : '1cm';
+  // Adjust margin for right column cards based on sidebar state
+  const rightCardMargin = open ? '0px' : '-150px';
   
   // Mock data
-  // Display food level in grams with a capacity of 50 g
+  // Display food level in grams with a capacity of 150 g
   const foodPercent = 65; // stored as percent internally
-  const capacityGrams = 50;
+  const capacityGrams = 150;
   const foodGrams = Math.round((foodPercent / 100) * capacityGrams);
   const nextFeeding = "7:00 PM";
   const lastFed = "2:00 PM";
@@ -41,8 +43,36 @@ export default function Home() {
   };
 
   return (
-    <div className="space-y-6" style={{marginTop: '0', paddingTop: '0'}}>
-      <div style={{marginTop: '0', paddingTop: '0'}}>
+    <div className="space-y-6" style={{marginTop: '-20px', paddingTop: '0', position: 'relative'}}>
+      {/* Background image in top right corner */}
+      <div 
+        style={{
+          position: 'absolute',
+          top: '-30px',
+          right: '0',
+          display: 'flex',
+          width: '250px',
+          height: '170px',
+          transform: 'rotate(-0.905deg)',
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexShrink: 0,
+          zIndex: 0,
+          pointerEvents: 'none'
+        }}
+      >
+        <img 
+          src="/assets/c30ce538219f24d478fbec24c03259d4bd5ae829.png"
+          alt="Background decoration"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain'
+          }}
+        />
+      </div>
+      
+      <div style={{marginTop: '0', paddingTop: '0', position: 'relative', zIndex: 1}}>
         <h1 
           className="text-3xl font-bold mb-6"
           style={{
@@ -66,13 +96,15 @@ export default function Home() {
             fontWeight: 600,
             lineHeight: 'normal',
             letterSpacing: '0.42px',
-            marginTop: '2px'
+            marginTop: '-10px'
           }}
         >
           Monitor your cat's feeding status
         </p>
-      </div>      {/* Top Row: Next Feeding and Last Fed */}
-      <div className="grid grid-cols-1 md:grid-cols-2 w-full" style={{gap: cardGap}}>
+      </div>
+      
+      {/* Top Row: Next Feeding and Last Fed */}
+      <div className="grid grid-cols-1 md:grid-cols-2 w-full" style={{gap: cardGap, position: 'relative', zIndex: 1, justifyContent: 'start'}}>
         <Card 
           className="w-full min-w-0"
           style={{
@@ -141,7 +173,9 @@ export default function Home() {
             height: '117px',
             borderRadius: '30px',
             border: '1px solid #D5D5D5',
-            background: 'linear-gradient(180deg, #F5E5E1 0%, #FFF6F4 100%)'
+            background: 'linear-gradient(180deg, #F5E5E1 0%, #FFF6F4 100%)',
+            marginLeft: rightCardMargin,
+            transition: 'margin-left 0.2s ease-linear'
           }}
         >
           <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
@@ -201,7 +235,7 @@ export default function Home() {
       </div>
 
       {/* Bottom Row: Food Level and Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 w-full" style={{gap: cardGap}}>
+      <div className="grid grid-cols-1 md:grid-cols-2 w-full" style={{gap: cardGap, position: 'relative', zIndex: 1, justifyContent: 'start'}}>
         <Card 
           className="w-full"
           style={{
@@ -264,7 +298,7 @@ export default function Home() {
                   remaining
                 </span>
               </div>
-              <Progress value={foodPercent} className="h-2" />
+              <Progress value={foodPercent} className="h-2" style={{'--progress-color': '#BEA29B'} as React.CSSProperties} />
             </div>
           </CardContent>
         </Card>
@@ -275,7 +309,9 @@ export default function Home() {
             height: '117px',
             borderRadius: '30px',
             border: '1px solid #D5D5D5',
-            background: 'linear-gradient(180deg, #F5E5E1 0%, #FFF6F4 100%)'
+            background: 'linear-gradient(180deg, #F5E5E1 0%, #FFF6F4 100%)',
+            marginLeft: rightCardMargin,
+            transition: 'margin-left 0.2s ease-linear'
           }}
         >
         <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
@@ -295,7 +331,7 @@ export default function Home() {
             Quick Actions
           </CardTitle>
           <img 
-            src="/assets/Group (2).png"
+            src="/assets/Group (3).svg"
             alt="Quick Actions Icon"
             className="h-4 w-4"
             style={{
@@ -339,7 +375,15 @@ export default function Home() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel data-testid="button-cancel-feed">Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleFeedNow} data-testid="button-confirm-feed">
+            <AlertDialogAction 
+              onClick={handleFeedNow} 
+              data-testid="button-confirm-feed"
+              style={{
+                backgroundColor: '#174143',
+                color: 'white'
+              }}
+              className="hover:opacity-90"
+            >
               Confirm
             </AlertDialogAction>
           </AlertDialogFooter>

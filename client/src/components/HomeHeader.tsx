@@ -13,8 +13,8 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ className = "" }) => {
       </div>
       
       <div className="flex items-center space-x-4">
-        <button className="p-2 rounded-full hover:bg-white/10 transition-colors">
-          <NotificationIcon className="w-6 h-6 aspect-square text-white" />
+        <button className="p-2 rounded-full hover:bg-white/10 transition-colors notification-icon">
+          <NotificationIcon className="w-5 h-5 sm:w-6 sm:h-6 aspect-square" />
         </button>
       </div>
     </div>

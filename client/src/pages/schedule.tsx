@@ -89,7 +89,7 @@ export default function SchedulePage() {
   };
 
   return (
-    <div className="space-y-6" style={{marginTop: '0', paddingTop: '0'}}>
+    <div className="space-y-6" style={{marginTop: '-20px', paddingTop: '0'}}>
       <div className="flex items-center justify-between relative" style={{marginTop: '0', paddingTop: '0'}}>
         <div className="z-10" style={{marginTop: '0', paddingTop: '0'}}>
           <h1 
@@ -115,7 +115,7 @@ export default function SchedulePage() {
               fontWeight: 600,
               lineHeight: 'normal',
               letterSpacing: '0.42px',
-              marginTop: '2px'
+              marginTop: '-10px'
             }}
           >
             Manage your cat's feeding times
@@ -141,7 +141,7 @@ export default function SchedulePage() {
       }}
     >
       <img 
-        src="/assets/tabler_plus.png"
+        src="/assets/tabler_plus.svg"
         alt="Add"
         className="mr-2"
         style={{
@@ -252,7 +252,7 @@ export default function SchedulePage() {
                       </div>
                       <Button variant="ghost" size="icon" onClick={() => setIntervals((cur) => cur.filter((_, i) => i !== idx))}>
                         <img 
-                          src="/assets/Vector.png"
+                          src="/assets/uil_trash.svg"
                           alt="Delete"
                           className="h-4 w-4"
                           style={{
@@ -285,7 +285,7 @@ export default function SchedulePage() {
                       }}
                     >
                       <img 
-                        src="/assets/tabler_plus.png"
+                        src="/assets/tabler_plus.svg"
                         alt="Add"
                         style={{
                           width: '17px',
