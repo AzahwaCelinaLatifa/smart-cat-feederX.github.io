@@ -89,93 +89,120 @@ export default function SchedulePage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between relative">
-        {/* Decorative paw icon in the background */}
-        <div className="fixed right-4 bottom-20 pointer-events-none z-[60] opacity-10 transform rotate-6">
-          {/* Decorative paw silhouette positioned above the bottom nav (fixed to viewport bottom-right) */}
-          <svg
-            className="w-52 h-52 md:w-64 md:h-64 text-primary"
-            viewBox="0 0 64 64"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-            role="img"
+    <div className="space-y-6" style={{marginTop: '0', paddingTop: '0'}}>
+      <div className="flex items-center justify-between relative" style={{marginTop: '0', paddingTop: '0'}}>
+        <div className="z-10" style={{marginTop: '0', paddingTop: '0'}}>
+          <h1 
+            className="text-3xl font-bold mb-6"
+            style={{
+              color: '#174143',
+              fontFamily: 'Poppins',
+              fontStyle: 'normal',
+              fontWeight: 600,
+              lineHeight: 'normal',
+              letterSpacing: '0.84px',
+              marginTop: '0'
+            }}
           >
-            {/* main pad: wider horizontal oval ("tidur") rotated slightly */}
-            <ellipse cx="34" cy="38" rx="14.5" ry="9" transform="rotate(-12 34 38)" fill="currentColor" />
-
-            {/* toes: spaced a bit further apart and slightly offset from the pad */}
-            <ellipse cx="18" cy="18" rx="4.8" ry="5.6" fill="currentColor" />
-            <ellipse cx="26.5" cy="12.5" rx="4.4" ry="5.2" fill="currentColor" />
-            <ellipse cx="38.5" cy="12.5" rx="4.4" ry="5.2" fill="currentColor" />
-            <ellipse cx="50" cy="22" rx="4.8" ry="5.6" fill="currentColor" />
-
-            {/* subtle inner highlight to add softness (very low opacity) */}
-            <ellipse cx="34" cy="40" rx="7" ry="5" fill="white" opacity="0.03" />
-          </svg>
-        </div>
-        <div className="z-10">
-          <h1 className="text-3xl font-bold">Feeding Schedule</h1>
-          <p className="text-muted-foreground mt-1">
+            Feeding Schedule
+          </h1>
+          <p 
+            className="text-muted-foreground"
+            style={{
+              color: '#174143',
+              fontFamily: 'Montserrat',
+              fontStyle: 'normal',
+              fontWeight: 600,
+              lineHeight: 'normal',
+              letterSpacing: '0.42px',
+              marginTop: '2px'
+            }}
+          >
             Manage your cat's feeding times
           </p>
   </div>
   <div className="z-10">
-    <Button onClick={openAdd}>
-      <Plus className="h-4 w-4 mr-2" />
+    <Button 
+      onClick={openAdd}
+      style={{
+        width: '95px',
+        height: '48px',
+        flexShrink: 0,
+        background: 'linear-gradient(90deg, #427A76 0.01%, #174143 50.5%)',
+        filter: 'drop-shadow(0 3px 3.2px rgba(0, 0, 0, 0.25))',
+        border: 'none',
+        color: '#FFF',
+        textAlign: 'center',
+        fontFamily: 'Montserrat',
+        fontStyle: 'normal',
+        fontWeight: 600,
+        lineHeight: 'normal',
+        letterSpacing: '0.42px'
+      }}
+    >
+      <img 
+        src="/assets/tabler_plus.png"
+        alt="Add"
+        className="mr-2"
+        style={{
+          width: '24px',
+          height: '24px',
+          flexShrink: 0,
+          aspectRatio: '1/1',
+          objectFit: 'contain',
+          filter: 'none'
+        }}
+      />
       Add
     </Button>
   </div>
 </div>
 
-  <div className="grid gap-3">
-      {schedules.map((s) => {
-        const hasIntervals = !!(s.intervals && s.intervals.length);
-        const hasNext = s.next_time != null;
-        const whenLabel = hasNext ? new Date(s.next_time as string).toLocaleString() : (hasIntervals ? 'Waiting for detection' : (s.time ? new Date(s.time).toLocaleString() : '—'));
-        return (
-          <Card key={s.id} className="border-l-4 border-l-primary">
-            <CardContent className="flex items-center justify-between p-4">
-              <div className="flex items-center gap-3">
-                <Clock className="h-5 w-5 text-primary" />
-                <div>
-                  <div className="text-xl font-semibold">{whenLabel}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {hasIntervals ? (
-                      <>
-                        Intervals: {s.intervals!.map((n, i) => `${n}h${i < s.intervals!.length - 1 ? ' • ' : ''}`)} • Portion: {s.portion} • {s.active ? 'Active' : 'Inactive'}
-                      </>
-                    ) : (
-                      <>Portion: {s.portion} • {s.active ? 'Active' : 'Inactive'}</>
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={() => openEdit(s)}>
-                  <Edit3 className="h-4 w-4 mr-2" /> Edit
-                </Button>
-                <Button variant="ghost" size="icon" onClick={() => handleDelete(s.id)}>
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        );
-      })}
-      </div>
+
 
       {/* Dialog */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editingId ? "Edit Schedule" : "Add Schedule"}</DialogTitle>
+        <DialogContent
+          style={{
+            borderRadius: '18px',
+            background: 'linear-gradient(90deg, #FFF 0.01%, #FFF 50.5%)',
+            boxShadow: '0 3px 3.2px -1px rgba(0, 0, 0, 0.25)'
+          }}
+        >
+          <DialogHeader className="text-center">
+            <DialogTitle 
+              style={{
+                color: '#174143',
+                textAlign: 'center',
+                fontFamily: 'Poppins',
+                fontSize: '20px',
+                fontStyle: 'normal',
+                fontWeight: 600,
+                lineHeight: 'normal',
+                letterSpacing: '0.6px'
+              }}
+            >
+              {editingId ? "Edit Schedule" : "Add Schedule"}
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="grid gap-3">
               <div className="flex items-start gap-3">
-                <Label className="w-28">Intervals (hours)</Label>
+                <Label 
+                  className="w-28"
+                  style={{
+                    color: '#174143',
+                    textAlign: 'center',
+                    fontFamily: 'Montserrat',
+                    fontSize: '14px',
+                    fontStyle: 'normal',
+                    fontWeight: 600,
+                    lineHeight: 'normal',
+                    letterSpacing: '0.42px'
+                  }}
+                >
+                  Intervals
+                </Label>
                 <div className="flex-1">
                   {/* Helper text removed per request */}
                   {intervals.map((iv, idx) => (
@@ -204,16 +231,73 @@ export default function SchedulePage() {
                           if (!/^\d+$/.test(text)) e.preventDefault();
                         }}
                         className="w-28"
+                        style={{
+                          borderRadius: '20px',
+                          border: '0.5px solid #797979'
+                        }}
                       />
-                      <div className="text-sm text-muted-foreground">hours</div>
+                      <div 
+                        className="text-sm text-muted-foreground"
+                        style={{
+                          color: '#6C6C6C',
+                          fontFamily: 'Montserrat',
+                          fontSize: '12px',
+                          fontStyle: 'normal',
+                          fontWeight: 300,
+                          lineHeight: 'normal',
+                          letterSpacing: '0.36px'
+                        }}
+                      >
+                        hours
+                      </div>
                       <Button variant="ghost" size="icon" onClick={() => setIntervals((cur) => cur.filter((_, i) => i !== idx))}>
-                        <Trash2 className="h-4 w-4" />
+                        <img 
+                          src="/assets/Vector.png"
+                          alt="Delete"
+                          className="h-4 w-4"
+                          style={{
+                            objectFit: 'contain',
+                            filter: 'none'
+                          }}
+                        />
                       </Button>
                     </div>
                   ))}
                   <div className="flex gap-2">
-                    <Button size="sm" onClick={() => setIntervals((cur) => [...cur, 4])}>
-                      <Plus className="h-4 w-4 mr-2" /> Add interval
+                    <Button 
+                      size="sm" 
+                      onClick={() => setIntervals((cur) => [...cur, 4])}
+                      style={{
+                        width: '111px',
+                        height: '25px',
+                        flexShrink: 0,
+                        borderRadius: '20px',
+                        background: 'linear-gradient(90deg, #427A76 0.01%, #174143 50.5%)',
+                        filter: 'drop-shadow(0 3px 3.2px rgba(0, 0, 0, 0.25))',
+                        border: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        textAlign: 'center',
+                        paddingLeft: '6px',
+                        paddingRight: '6px'
+                      }}
+                    >
+                      <img 
+                        src="/assets/tabler_plus.png"
+                        alt="Add"
+                        style={{
+                          width: '17px',
+                          height: '17px',
+                          flexShrink: 0,
+                          aspectRatio: '1/1',
+                          objectFit: 'contain',
+                          filter: 'none',
+                          marginRight: '4px'
+                        }}
+                      /> 
+                      Add interval
                     </Button>
                   </div>
                 </div>
@@ -224,14 +308,66 @@ export default function SchedulePage() {
               {/* Portion and Active controls removed; they use defaults (1, active) */}
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => { setShowDialog(false); setEditingId(null); }}>
+          <DialogFooter className="flex flex-col gap-3">
+            <Button 
+              onClick={handleSave}
+              style={{
+                width: '217px',
+                height: '29px',
+                borderRadius: '20px',
+                background: '#173536',
+                color: '#FFF',
+                textAlign: 'center',
+                fontFamily: 'Montserrat',
+                fontSize: '14px',
+                fontStyle: 'normal',
+                fontWeight: 600,
+                lineHeight: 'normal',
+                letterSpacing: '0.42px',
+                border: 'none'
+              }}
+            >
+              Save
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => { setShowDialog(false); setEditingId(null); }}
+              style={{
+                width: '217px',
+                height: '29px',
+                borderRadius: '20px',
+                border: '0.5px solid #797979',
+                color: '#174143',
+                textAlign: 'center',
+                fontFamily: 'Montserrat',
+                fontSize: '14px',
+                fontStyle: 'normal',
+                fontWeight: 600,
+                lineHeight: 'normal',
+                letterSpacing: '0.42px',
+                background: 'transparent'
+              }}
+            >
               Cancel
             </Button>
-            <Button onClick={handleSave}>Save</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      
+      {/* Decorative image at bottom right corner */}
+      <div 
+        style={{
+          position: 'absolute',
+          bottom: '20px',
+          right: '20px',
+          width: '407px',
+          height: '229px',
+          flexShrink: 0,
+          background: 'url(/assets/7817fd7fd11a4aff61de9fcb7c91902ed009fa47.png) white 5% / cover no-repeat',
+          zIndex: 1,
+          opacity: 1
+        }}
+      />
     </div>
   );
 }

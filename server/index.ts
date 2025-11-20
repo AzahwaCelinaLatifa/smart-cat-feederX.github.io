@@ -155,8 +155,6 @@ app.get('/api/schedule', auth, async (req, res) => {
 app.post('/api/schedule', auth, async (req, res) => {
   const userId = (req as any).user.id;
 
-  const { portion, active, intervals, start_on_detection, initial_start_time } = req.body ?? {};
-
   const { time, intervals, start_on_detect, portion, active } = req.body ?? {};
 
   const p = Number(portion);
@@ -181,20 +179,10 @@ app.post('/api/schedule', auth, async (req, res) => {
     lastFeed = base.toISOString(); // treat base as first feed time (or detection time)
     nextFeedAt = new Date(base.getTime() + firstHours * 3600000).toISOString();
   }
-  const insertObj: any = {
-    user_id: userId,
-    portion: p,
-    active: Boolean(active),
-    intervals: seq,
-    start_on_detection: startOnDetection,
-    sequence_index: 0,
-    last_feed: lastFeed,
-    next_feed_at: nextFeedAt
-  };
 
   let next_time: string | null = null;
   let intervalsJson: any = null;
-  let startOnDetect = Boolean(start_on_detect);
+  const startOnDetect = Boolean(start_on_detect);
 
   if (Array.isArray(intervals) && intervals.length) {
     const valid = intervals.every((n: any) => Number.isFinite(Number(n)) && Number(n) > 0);
@@ -211,7 +199,6 @@ app.post('/api/schedule', auth, async (req, res) => {
     // legacy: time-based single schedule
     if (!time) return res.status(400).json({ message: 'Time is required' });
     next_time = time;
-    startOnDetect = false;
   }
 
   const insertObj: any = { user_id: userId, time: time ?? null, next_time, portion: p, active: Boolean(active), start_on_detect: startOnDetect };
@@ -257,6 +244,9 @@ app.put('/api/schedule/:id', auth, async (req, res) => {
     if (intervals.length) {
       updates.next_feed_at = new Date(base.getTime() + intervals[0] * 3600000).toISOString();
       updates.sequence_index = 0;
+    }
+  }
+
   if (body.active !== undefined) updates.active = Boolean(body.active);
 
   // intervals update
@@ -402,16 +392,12 @@ app.post('/api/cron/trigger', async (req, res) => {
   const nowIso = now.toISOString();
   const fiveMinAgoIso = new Date(now.getTime() - 5 * 60000).toISOString();
 
-  // Fetch schedules where next_feed_at within window
+  // Fetch schedules where next_time within window
   const { data: schedules, error } = await supabaseAdmin
     .from('feeding_schedule')
     .select('*')
     .eq('active', true)
-
-    .not('next_feed_at', 'is', null)
-    .lte('next_feed_at', nowIso)
-    .gte('next_feed_at', fiveMinAgoIso);
-=======
+    .not('next_time', 'is', null)
     .lte('next_time', nowIso)
     .gte('next_time', fiveMinAgoIso);
 

@@ -3,10 +3,36 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export default function Camera() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Camera Feed</h1>
-        <p className="text-muted-foreground mt-1">Monitor your pet in real-time with AI detection</p>
+    <div className="space-y-6" style={{marginTop: '0', paddingTop: '0'}}>
+      <div style={{marginTop: '0', paddingTop: '0'}}>
+        <h1 
+          className="text-3xl font-bold text-foreground"
+          style={{
+            color: '#174143',
+            fontFamily: 'Poppins',
+            fontStyle: 'normal',
+            fontWeight: 600,
+            lineHeight: 'normal',
+            letterSpacing: '0.84px',
+            marginTop: '0'
+          }}
+        >
+          Camera Feed
+        </h1>
+        <p 
+          className="text-muted-foreground"
+          style={{
+            color: '#174143',
+            fontFamily: 'Montserrat',
+            fontStyle: 'normal',
+            fontWeight: 600,
+            lineHeight: 'normal',
+            letterSpacing: '0.42px',
+            marginTop: '2px'
+          }}
+        >
+          Monitor your pet in real-time with AI detection
+        </p>
       </div>
 
       <Card>

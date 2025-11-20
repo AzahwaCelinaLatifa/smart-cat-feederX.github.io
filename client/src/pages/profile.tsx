@@ -100,60 +100,106 @@ export default function Profile() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-foreground">Profile</h1>
-        <p className="text-muted-foreground mt-1">Manage your account settings</p>
+        <h1 
+          className="text-3xl font-bold text-foreground"
+          style={{
+            color: '#174143',
+            fontFamily: 'Poppins',
+            fontStyle: 'normal',
+            fontWeight: 600,
+            lineHeight: 'normal',
+            letterSpacing: '0.84px'
+          }}
+        >
+          Profile
+        </h1>
+        <p 
+          className="text-muted-foreground mt-1"
+          style={{
+            color: '#174143',
+            fontFamily: 'Montserrat',
+            fontStyle: 'normal',
+            fontWeight: 600,
+            lineHeight: 'normal',
+            letterSpacing: '0.42px'
+          }}
+        >
+          Manage your account settings
+        </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between w-full">
-            <CardTitle className="flex items-center gap-2">
-              <User className="h-5 w-5 text-primary" />
-              Pet Information
-            </CardTitle>
-            <div>
-              {isEditing ? (
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm" onClick={saveNames} data-testid="button-save-names">
-                    <Check className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={cancelEdit} data-testid="button-cancel-names">
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ) : (
-                <Button variant="ghost" size="sm" onClick={startEdit} data-testid="button-edit-names">
-                  <Edit3 className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex items-center gap-4">
-            <Avatar className="h-20 w-20">
-              <AvatarFallback className="text-2xl bg-primary text-primary-foreground">
-                <Cat className="h-10 w-10" />
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="text-sm text-muted-foreground">Pet Name</p>
-              {isEditing ? (
-                <Input
-                  value={petName}
-                  onChange={(e) => setPetName(e.target.value)}
-                  data-testid="input-pet-name"
-                  className="w-48"
-                />
-              ) : (
-                <p className="text-xl font-semibold" data-testid="text-pet-name">{petName}</p>
-              )}
-            </div>
-          </div>
+      {/* Avatar kucing di luar card */}
+      <div className="flex justify-center mb-6">
+        <div 
+          className="h-20 w-20 rounded-full overflow-hidden border-2 shadow-md"
+          style={{
+            borderColor: '#174143',
+            backgroundColor: '#174143'
+          }}
+        >
+          <img 
+            src="/assets/solar_cat-broken.png" 
+            alt="Cat Profile" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+      </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
+      {/* Pet Name di bawah avatar */}
+      <div className="flex justify-center mb-6">
+        {isEditing ? (
+          <Input
+            value={petName}
+            onChange={(e) => setPetName(e.target.value)}
+            data-testid="input-pet-name"
+            className="w-48 text-center text-xl font-semibold"
+            style={{
+              fontFamily: 'Poppins',
+              color: '#174143',
+              border: '2px solid #174143'
+            }}
+          />
+        ) : (
+          <p 
+            className="text-xl font-semibold" 
+            data-testid="text-pet-name"
+            style={{
+              fontFamily: 'Poppins',
+              color: '#174143'
+            }}
+          >
+            {petName}
+          </p>
+        )}
+      </div>
+
+      <Card 
+        className="mx-auto"
+        style={{
+          width: '347px',
+          height: '181px',
+          flexShrink: 0,
+          borderRadius: '30px',
+          border: '1px solid rgba(0, 0, 0, 0.08)',
+          background: 'linear-gradient(180deg, #F5E5E1 7.21%, #FFF6F4 100%)'
+        }}
+      >
+        <CardContent style={{padding: '20px'}}>
+          <div className="flex flex-col gap-4">
             <div>
-              <p className="text-sm text-muted-foreground">Owner Name</p>
+              <p 
+                style={{
+                  color: '#6C6C6C',
+                  fontFamily: 'Montserrat',
+                  fontSize: '14px',
+                  fontStyle: 'normal',
+                  fontWeight: 600,
+                  lineHeight: 'normal',
+                  letterSpacing: '0.42px'
+                }}
+              >
+                Owner Name
+              </p>
               {isEditing ? (
                 <Input
                   value={ownerName}
@@ -162,60 +208,176 @@ export default function Profile() {
                   className="w-48"
                 />
               ) : (
-                <p className="text-base font-medium" data-testid="text-owner-name">{ownerName}</p>
+                <div 
+                  data-testid="text-owner-name"
+                  style={{
+                    width: '291px',
+                    height: '36px',
+                    flexShrink: 0,
+                    borderRadius: '20px',
+                    border: '0.5px solid #797979',
+                    display: 'flex',
+                    alignItems: 'center',
+                    paddingLeft: '15px',
+                    color: '#174143',
+                    fontFamily: 'Montserrat',
+                    fontSize: '14px',
+                    fontStyle: 'normal',
+                    fontWeight: 600,
+                    lineHeight: 'normal',
+                    letterSpacing: '0.42px',
+                    backgroundColor: 'white'
+                  }}
+                >
+                  {ownerName}
+                </div>
               )}
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Email</p>
-              <p className="text-base font-medium" data-testid="text-email">{user?.email ?? '—'}</p>
+              <p 
+                style={{
+                  color: '#6C6C6C',
+                  fontFamily: 'Montserrat',
+                  fontSize: '14px',
+                  fontStyle: 'normal',
+                  fontWeight: 600,
+                  lineHeight: 'normal',
+                  letterSpacing: '0.42px'
+                }}
+              >
+                Email
+              </p>
+              <div 
+                data-testid="text-email"
+                style={{
+                  width: '291px',
+                  height: '36px',
+                  flexShrink: 0,
+                  borderRadius: '20px',
+                  border: '0.5px solid #797979',
+                  display: 'flex',
+                  alignItems: 'center',
+                  paddingLeft: '15px',
+                  color: '#174143',
+                  fontFamily: 'Montserrat',
+                  fontSize: '14px',
+                  fontStyle: 'normal',
+                  fontWeight: 600,
+                  lineHeight: 'normal',
+                  letterSpacing: '0.42px',
+                  backgroundColor: 'white'
+                }}
+              >
+                {user?.email ?? '—'}
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Settings</CardTitle>
+      <Card 
+        className="mx-auto"
+        style={{
+          width: '347px',
+          height: '181px',
+          flexShrink: 0,
+          borderRadius: '30px',
+          border: '1px solid rgba(0, 0, 0, 0.08)',
+          background: 'linear-gradient(180deg, #F5E5E1 7.21%, #FFF6F4 100%)'
+        }}
+      >
+        <CardHeader style={{padding: '20px 20px 0px 20px', marginBottom: '0px'}}>
+          <CardTitle 
+            style={{
+              width: '145px',
+              height: '50px',
+              flexShrink: 0,
+              color: '#174143',
+              textAlign: 'center',
+              fontFamily: 'Poppins',
+              fontSize: '28px',
+              fontStyle: 'normal',
+              fontWeight: 600,
+              lineHeight: 'normal',
+              letterSpacing: '0.84px'
+            }}
+          >
+            Settings
+          </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex items-center justify-between">
+        <CardContent style={{padding: '10px 20px 0px 20px'}}>
+          <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3">
-              <Power className="h-5 w-5 text-muted-foreground" />
-              <Label htmlFor="automatic-feeding" className="text-base font-normal">
-                Automatic Feeding {autoFeeding ? "Enabled" : "Disabled"}
-              </Label>
-            </div>
-            <Switch
-              id="automatic-feeding"
-              checked={autoFeeding}
-              onCheckedChange={handleAutoFeedingToggle}
-              data-testid="switch-automatic-feeding"
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Bell className="h-5 w-5 text-muted-foreground" />
-              <Label htmlFor="notifications" className="text-base font-normal">
+              <Bell className="h-8 w-8 text-muted-foreground" />
+              <Label 
+                htmlFor="notifications" 
+                style={{
+                  width: '253px',
+                  height: '17px',
+                  flexShrink: 0,
+                  color: '#174143',
+                  textAlign: 'left',
+                  fontFamily: 'Montserrat',
+                  fontSize: '13px',
+                  fontStyle: 'normal',
+                  fontWeight: 500,
+                  lineHeight: 'normal',
+                  letterSpacing: '0.39px'
+                }}
+              >
                 Push Notifications
               </Label>
+              <Switch
+                id="notifications"
+                checked={notificationsEnabled}
+                onCheckedChange={handleNotificationsToggle}
+                data-testid="switch-notifications"
+                style={{marginLeft: '-20px'}}
+              />
             </div>
-            <Switch
-              id="notifications"
-              checked={notificationsEnabled}
-              onCheckedChange={handleNotificationsToggle}
-              data-testid="switch-notifications"
-            />
-          </div>
 
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <Globe className="h-5 w-5 text-muted-foreground" />
-              <Label htmlFor="language" className="text-base font-normal">
-                Language
-              </Label>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Globe className="h-5 w-5 text-muted-foreground" />
+                <Label 
+                  htmlFor="language" 
+                  style={{
+                    width: '253px',
+                    height: '17px',
+                    flexShrink: 0,
+                    color: '#174143',
+                    textAlign: 'left',
+                    fontFamily: 'Montserrat',
+                    fontSize: '13px',
+                    fontStyle: 'normal',
+                    fontWeight: 500,
+                    lineHeight: 'normal',
+                    letterSpacing: '0.39px'
+                  }}
+                >
+                  Language
+                </Label>
+              </div>
+              <div 
+                data-testid="text-language"
+                style={{
+                  width: '40px',
+                  height: '17px',
+                  flexShrink: 0,
+                  color: '#174143',
+                  textAlign: 'left',
+                  fontFamily: 'Montserrat',
+                  fontSize: '13px',
+                  fontStyle: 'normal',
+                  fontWeight: 500,
+                  lineHeight: 'normal',
+                  letterSpacing: '0.39px',
+                  marginLeft: '-70px'
+                }}
+              >
+                English
+              </div>
             </div>
-            <div className="text-base font-medium" data-testid="text-language">English</div>
           </div>
         </CardContent>
       </Card>

@@ -104,156 +104,225 @@ const [loading, setLoading] = useState(false);
   }, []);
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center p-4 login-gradient">
-      <div className="flex flex-col items-center gap-4">
-        {/* Animated cat that peeks above the login card */}
-        <div className="pointer-events-none z-50">
-          <svg
-            className="login-cat"
-            viewBox="0 0 140 120"
-            xmlns="http://www.w3.org/2000/svg"
-            role="img"
-            aria-hidden="true"
-          >
-            <defs>
-              <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-                <feDropShadow dx="0" dy="6" stdDeviation="8" floodOpacity="0.12" />
-              </filter>
-            </defs>
+    <div className="min-h-screen w-full fixed inset-0" style={{
+      background: 'linear-gradient(180deg, #F5E5E1 0%, #427A76 51.39%, #174143 78.39%)'
+    }}>
 
-            {/* subtle ground shadow so the head feels attached */}
-            <ellipse cx="70" cy="110" rx="40" ry="8" fill="#000" opacity="0.06" />
 
-            {/* the head group that will peek up/down (slightly tilted like reference) */}
-            <g className="cat-head" filter="url(#shadow)" transform="translate(0,24) rotate(-6 70 56)">
-              {/* left ear with pink inner */}
-              <path className="cat-ear cat-ear--left" d="M28 36 L46 4 L62 36 Z" fill="#0b0b0b" />
-              <path className="cat-ear-inner cat-ear-inner--left" d="M40 26 L46 12 L52 26 Z" fill="#ffb6b6" opacity="0.95" />
-
-              {/* right ear with pink inner */}
-              <path className="cat-ear cat-ear--right" d="M112 36 L94 4 L78 36 Z" fill="#0b0b0b" />
-              <path className="cat-ear-inner cat-ear-inner--right" d="M100 26 L94 12 L88 26 Z" fill="#ffb6b6" opacity="0.95" />
-
-              {/* rounded face */}
-              <ellipse className="cat-face" cx="70" cy="58" rx="46" ry="44" fill="#0b0b0b" />
-
-              {/* BIG round eyes like the reference (white outer, brown iris, black pupil with tiny highlight) */}
-              <g className="cat-eye-group" transform="translate(0,0)">
-                <g className="cat-eye cat-eye--left" transform="translate(-18,0)">
-                  <circle className="eye-white" cx="70" cy="56" r="16" fill="#ffffff" />
-                  <circle className="eye-iris" cx="70" cy="56" r="10" fill="#462f2f" />
-                  <circle className="eye-pupil" cx="72" cy="58" r="5" fill="#000" />
-                  <circle className="eye-glint" cx="76" cy="52" r="2" fill="#fff" opacity="0.95" />
-                </g>
-                <g className="cat-eye cat-eye--right" transform="translate(18,0)">
-                  <circle className="eye-white" cx="70" cy="56" r="16" fill="#ffffff" />
-                  <circle className="eye-iris" cx="70" cy="56" r="10" fill="#462f2f" />
-                  <circle className="eye-pupil" cx="72" cy="58" r="5" fill="#000" />
-                  <circle className="eye-glint" cx="76" cy="52" r="2" fill="#fff" opacity="0.95" />
-                </g>
-              </g>
-
-              {/* tiny pink triangular nose */}
-              <path className="cat-nose" d="M70 74 l-4 6 l8 0 z" fill="#ff8b8b" />
-
-              {/* subtle whiskers */}
-              <g className="cat-whiskers" stroke="#f3f0f0" strokeWidth="1.2" strokeLinecap="round" opacity="0.9">
-                <path className="whisk left-1" d="M44 74 q-14 -6 -30 -6" />
-                <path className="whisk left-2" d="M46 80 q-16 0 -32 4" />
-                <path className="whisk right-1" d="M96 74 q14 -6 30 -6" />
-                <path className="whisk right-2" d="M94 80 q16 0 32 4" />
-              </g>
-            </g>
-          </svg>
+      {/* Content positioned to fill screen */}
+      <div className="flex flex-col items-center justify-center h-full px-4">
+        {/* Logo and 3D Cat illustration - responsive sizing */}
+        <div className="mb-4 flex-shrink-0 flex flex-col items-center space-y-4">
+          <img
+            src="/assets/image.png"
+            alt="Pawsitive Feed Logo"
+            className="w-48 h-48 object-contain"
+            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+          />
+          <img
+            src="/Recorrido Virtual Universidad de La Sabana Utiliza las flechas de tu teclado o tu mouse para desplazarte por las diferentes locaciones. Click aquí para comenzar (4) 1 (1).png"
+            alt="Cute 3D Cat"
+            className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 object-contain"
+          />
         </div>
 
-        <Card className="w-full max-w-sm md:max-w-md shadow-none login-card" style={{ overflow: 'visible' }}>
-        <CardHeader>
-          <div className="flex">
-            <Button
-              variant={isSignUp ? "ghost" : "default"}
-              size="sm"
-              className="flex-1 rounded-r-none"
-              onClick={() => setIsSignUp(false)}
-            >
-              Sign In
-            </Button>
-            <Button
-              variant={isSignUp ? "default" : "ghost"}
-              size="sm"
-              className="flex-1 rounded-l-none"
-              onClick={() => setIsSignUp(true)}
-            >
-              Sign Up
-            </Button>
+        {/* Login Card - responsive sizing for desktop and mobile */}
+        <div 
+          className="bg-white shadow-xl flex-shrink-0"
+          style={{
+            width: 'min(390px, 90vw)',
+            height: 'min(max(536px, 80vh), 90vh)',
+            maxHeight: '90vh',
+            borderRadius: '30px 30px 0 0',
+            background: '#FFF'
+          }}
+        >
+          {/* Tab buttons - EXACT positioning and styling */}
+          <div className="px-8 pt-6 pb-2">
+            <div className="flex items-center gap-4">
+              <button
+                className={`px-8 py-3 rounded-full text-sm font-semibold transition-all ${
+                  !isSignUp 
+                    ? 'bg-teal-800 text-white shadow-md' 
+                    : 'text-gray-400'
+                }`}
+                onClick={() => setIsSignUp(false)}
+              >
+                Sign In
+              </button>
+              <button
+                className={`px-8 py-3 rounded-full text-sm font-semibold transition-all ${
+                  isSignUp 
+                    ? 'bg-teal-800 text-white shadow-md' 
+                    : 'text-gray-400'
+                }`}
+                onClick={() => setIsSignUp(true)}
+              >
+                Sign Up
+              </button>
+            </div>
           </div>
-          <CardTitle style={{ marginTop: "1cm" }}>{isSignUp ? "Create account" : "Sign in"}</CardTitle>
-        </CardHeader>
 
-        <CardContent>
-          {error && (
-            <Alert variant="destructive" className="mb-4">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
+          {/* Title - EXACT typography and positioning */}
+          <div className="px-8 pt-4 pb-6">
+            <h1 
+              className="text-4xl font-bold"
+              style={{
+                color: '#174143',
+                textAlign: 'center',
+                fontFamily: 'Poppins',
+                fontSize: '28px',
+                fontStyle: 'normal',
+                fontWeight: 600,
+                lineHeight: 'normal',
+                letterSpacing: '0.84px'
+              }}
+            >
+              {isSignUp ? 'Create Account' : 'Sign In'}
+            </h1>
+          </div>
 
-          <form onSubmit={handleLogin} className="space-y-3">
-            <div className="relative" ref={suggestionsRef}>
-              <label className="text-sm mb-1 block text-muted-foreground">Email</label>
-              <Input
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => { setEmail(e.target.value); setShowSuggestions(true); }}
-                onFocus={() => setShowSuggestions(true)}
-                required
-                autoComplete="off"
-              />
-              {showSuggestions && savedEmails.length > 0 && (
-                <div className="absolute left-0 right-0 mt-1 bg-card border border-card-border rounded-md z-50">
-                  {savedEmails.filter(s => s.includes(email.trim().toLowerCase())).map((s) => (
-                    <button
-                      key={s}
-                      type="button"
-                      className="w-full text-left px-3 py-2 hover:bg-muted"
-                      onMouseDown={(ev) => {
-                        // onMouseDown to select before blur
-                        ev.preventDefault();
-                        setEmail(s);
-                        setShowSuggestions(false);
-                      }}
-                    >
-                      {s}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+          {/* Form - EXACT spacing and styling */}
+          <div className="px-8 pb-10">
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl">
+                <p className="text-sm text-red-600">{error}</p>
+              </div>
+            )}
 
-            <div>
-              <label className="text-sm mb-1 block text-muted-foreground">Password</label>
-              <Input
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
+            <form onSubmit={handleLogin} className="space-y-6">
+              <div className="relative" ref={suggestionsRef}>
+                <label 
+                  className="block text-sm font-medium mb-3"
+                  style={{
+                    color: '#6C6C6C',
+                    fontFamily: 'Montserrat',
+                    fontSize: '14px',
+                    fontStyle: 'normal',
+                    fontWeight: 300,
+                    lineHeight: 'normal',
+                    letterSpacing: '0.42px'
+                  }}
+                >
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => { setEmail(e.target.value); setShowSuggestions(true); }}
+                  onFocus={() => setShowSuggestions(true)}
+                  required
+                  className="px-6 py-4 focus:ring-0 focus:border-gray-300 transition-colors text-base"
+                  style={{
+                    width: '291px',
+                    height: '36px',
+                    flexShrink: 0,
+                    borderRadius: '20px',
+                    border: '0.5px solid #797979',
+                    outline: 'none',
+                    backgroundColor: '#ffffff'
+                  }}
+                />
+                {showSuggestions && savedEmails.length > 0 && (
+                  <div className="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50">
+                    {savedEmails.filter(s => s.includes(email.trim().toLowerCase())).map((s) => (
+                      <button
+                        key={s}
+                        type="button"
+                        className="w-full text-left px-4 py-3 hover:bg-gray-50 text-sm"
+                        onMouseDown={(ev) => {
+                          ev.preventDefault();
+                          setEmail(s);
+                          setShowSuggestions(false);
+                        }}
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
 
-            <div className="flex justify-end text-sm mb-2">
-              <Link href="/forgot-password" className="text-primary hover:underline">
-                Forgot password?
-              </Link>
-            </div>
-            <CardFooter className="pt-0">
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Please wait…" : isSignUp ? "Create account" : "Sign in"}
-              </Button>
-            </CardFooter>
-          </form>
-        </CardContent>
-      </Card>
+              <div>
+                <label 
+                  className="block text-sm font-medium mb-3"
+                  style={{
+                    color: '#6C6C6C',
+                    fontFamily: 'Montserrat',
+                    fontSize: '14px',
+                    fontStyle: 'normal',
+                    fontWeight: 300,
+                    lineHeight: 'normal',
+                    letterSpacing: '0.42px'
+                  }}
+                >
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="px-6 py-4 focus:ring-0 focus:border-gray-300 transition-colors text-base"
+                  style={{
+                    width: '291px',
+                    height: '36px',
+                    flexShrink: 0,
+                    borderRadius: '20px',
+                    border: '0.5px solid #797979',
+                    outline: 'none',
+                    backgroundColor: '#ffffff'
+                  }}
+                />
+              </div>
+
+              <div className="text-right pt-2 pb-2">
+                <Link 
+                  href="/forgot-password" 
+                  className="text-sm font-medium hover:underline"
+                  style={{
+                    color: '#815247',
+                    textAlign: 'center',
+                    fontFamily: 'Montserrat',
+                    fontSize: '14px',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    lineHeight: '25px',
+                    letterSpacing: '0.42px'
+                  }}
+                >
+                  Forgot password?
+                </Link>
+              </div>
+
+              <div className="pt-2 flex justify-center">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="transition-colors disabled:opacity-50 shadow-lg"
+                  style={{
+                    width: '291px',
+                    height: '44px',
+                    flexShrink: 0,
+                    borderRadius: '30px',
+                    background: 'linear-gradient(90deg, #174143 0%, #174143 100%)',
+                    color: '#FFF',
+                    textAlign: 'center',
+                    fontFamily: 'Montserrat',
+                    fontSize: '16px',
+                    fontStyle: 'normal',
+                    fontWeight: 600,
+                    lineHeight: 'normal',
+                    letterSpacing: '0.48px',
+                    border: 'none'
+                  }}
+                >
+                  {loading ? "Please wait…" : (isSignUp ? "Create Account" : "Sign In")}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   );
