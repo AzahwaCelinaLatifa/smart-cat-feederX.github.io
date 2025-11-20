@@ -192,11 +192,37 @@ export default function History() {
   const [hoveredBar, setHoveredBar] = useState<number | null>(null);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Feeding History</h1>
-          <p className="text-muted-foreground mt-1">View past feeding records</p>
+    <div className="space-y-6" style={{marginTop: '0', paddingTop: '0'}}>
+      <div className="flex items-center justify-between" style={{marginTop: '0', paddingTop: '0'}}>
+        <div style={{marginTop: '0', paddingTop: '0'}}>
+          <h1 
+            className="text-3xl font-bold mb-6"
+            style={{
+              color: '#174143',
+              fontFamily: 'Poppins',
+              fontStyle: 'normal',
+              fontWeight: 600,
+              lineHeight: 'normal',
+              letterSpacing: '0.84px',
+              marginTop: '0'
+            }}
+          >
+            Feeding History
+          </h1>
+          <p 
+            className="text-muted-foreground"
+            style={{
+              color: '#174143',
+              fontFamily: 'Montserrat',
+              fontStyle: 'normal',
+              fontWeight: 600,
+              lineHeight: 'normal',
+              letterSpacing: '0.42px',
+              marginTop: '2px'
+            }}
+          >
+            View past feeding records
+          </p>
         </div>
         <div>
           <Button
@@ -205,7 +231,15 @@ export default function History() {
             disabled={history.length === 0}
             data-testid="button-clear-history"
           >
-            <Trash2 className="h-4 w-4 mr-2" />
+            <img 
+              src="/assets/Vector.png"
+              alt="Delete"
+              className="h-4 w-4 mr-2"
+              style={{
+                objectFit: 'contain',
+                filter: 'none'
+              }}
+            />
             Clear History
           </Button>
         </div>
@@ -216,7 +250,11 @@ export default function History() {
         <div
           role="tablist"
           aria-label="History view"
-          className="inline-flex items-center rounded-full bg-muted p-1 shadow-sm"
+          className="inline-flex items-center rounded-full p-1"
+          style={{
+            background: 'linear-gradient(91deg, rgba(63, 184, 147, 0.40) 42.37%, rgba(0, 73, 51, 0.67) 88.48%)',
+            borderRadius: '30px'
+          }}
         >
           <button
             type="button"
@@ -224,10 +262,22 @@ export default function History() {
             aria-selected={view === "list"}
             onClick={() => setView("list")}
             data-testid="menu-view-history"
-            className={
-              "px-6 py-2 rounded-full transition-colors " +
-              (view === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground bg-transparent")
-            }
+            className="px-6 py-2 transition-colors"
+            style={{
+              borderRadius: '30px',
+              background: view === "list" 
+                ? 'linear-gradient(0deg, #174143 0%, #174143 100%)'
+                : 'transparent',
+              color: '#FFFFFF',
+              textAlign: 'center',
+              fontFamily: 'Montserrat',
+              fontSize: '14px',
+              fontStyle: 'normal',
+              fontWeight: 600,
+              lineHeight: 'normal',
+              letterSpacing: '0.42px',
+              border: 'none'
+            }}
           >
             History
           </button>
@@ -237,10 +287,22 @@ export default function History() {
             aria-selected={view === "analytics"}
             onClick={() => setView("analytics")}
             data-testid="menu-view-analytics"
-            className={
-              "px-6 py-2 rounded-full transition-colors " +
-              (view === "analytics" ? "bg-primary text-primary-foreground" : "text-muted-foreground bg-transparent")
-            }
+            className="px-6 py-2 transition-colors"
+            style={{
+              borderRadius: '30px',
+              background: view === "analytics" 
+                ? 'linear-gradient(0deg, #174143 0%, #174143 100%)'
+                : 'transparent',
+              color: '#FFFFFF',
+              textAlign: 'center',
+              fontFamily: 'Montserrat',
+              fontSize: '14px',
+              fontStyle: 'normal',
+              fontWeight: 600,
+              lineHeight: 'normal',
+              letterSpacing: '0.42px',
+              border: 'none'
+            }}
           >
             Analytics
           </button>

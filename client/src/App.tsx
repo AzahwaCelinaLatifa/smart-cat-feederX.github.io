@@ -7,8 +7,10 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { Link } from "wouter";
 import React, { useState, useEffect } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Drawer, DrawerTrigger, DrawerContent, DrawerClose, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
-import { Cat } from "lucide-react";
+import { ProfileSidebar } from "@/components/ProfileSidebar";
+import { Cat, Menu } from "lucide-react";
+import { useSidebar } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
 // Sidebar component removed to keep mobile layout consistent on desktop
 import { BottomNav } from "@/components/bottom-nav";
 import { AppSidebar } from "@/components/app-sidebar";
@@ -55,53 +57,40 @@ function App() {
 
   // profile open state is managed inside ProfileDrawer
 
-  // Move profile drawer into a child component that consumes auth.
-  // This ensures we only render the avatar + drawer when a user is logged in.
-  function ProfileDrawer() {
+  // Profile button with custom sidebar
+  function ProfileButton() {
     const { user } = useAuth();
-    const [open, setOpen] = useState(false);
-
-    useEffect(() => {
-      if (!open) return;
-      const original = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = original;
-      };
-    }, [open]);
-
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
+    
     if (!user) return null;
 
     return (
-      <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerTrigger asChild>
-          {/* Avatar placed in header (left) - no fixed positioning so it flows with header layout */}
-          <button
-            aria-label="Open profile"
-            className="rounded-full shadow-md hover-elevate active-elevate-2 p-0"
+      <>
+        <button
+          onClick={() => setIsProfileOpen(true)}
+          aria-label="Open profile"
+          className="rounded-full shadow-md hover-elevate active-elevate-2 p-0"
+        >
+          <div 
+            className="h-10 w-10 rounded-full overflow-hidden border-2 shadow-md"
+            style={{
+              borderColor: '#174143',
+              backgroundColor: '#174143'
+            }}
           >
-            <Avatar className="h-10 w-10">
-              <AvatarFallback className="bg-primary text-primary-foreground">
-                <Cat className="h-5 w-5" />
-              </AvatarFallback>
-            </Avatar>
-          </button>
-        </DrawerTrigger>
-
-        <DrawerContent className="inset-y-0 right-0 left-auto top-0 bottom-0 w-full max-w-xs md:max-w-sm md:w-96 rounded-l-[10px] mt-0 h-full overflow-auto flex flex-col">
-          <DrawerHeader>
-            <div className="flex items-center justify-end">
-              <DrawerClose asChild>
-                <button aria-label="Close profile" className="rounded-md p-2 hover:bg-muted">Close</button>
-              </DrawerClose>
-            </div>
-          </DrawerHeader>
-          {/* Render the Profile page inside a scrollable area that stops at the logout button */}
-          <div className="px-4 flex-1 overflow-auto" style={{ overscrollBehavior: 'contain' }}>
-            <Profile />
+            <img 
+              src="/assets/solar_cat-broken.png" 
+              alt="Profile" 
+              className="w-full h-full object-cover"
+            />
           </div>
-        </DrawerContent>
-      </Drawer>
+        </button>
+        
+        <ProfileSidebar 
+          isOpen={isProfileOpen} 
+          onClose={() => setIsProfileOpen(false)} 
+        />
+      </>
     );
   }
 
@@ -112,25 +101,54 @@ function App() {
     return <AppSidebar />;
   }
 
+  // Sidebar toggle button
+  function SidebarToggle() {
+    const { user } = useAuth();
+    const { toggleSidebar } = useSidebar();
+    
+    if (!user) return null;
+    
+    return (
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={toggleSidebar}
+        className="hidden md:flex h-10 w-10 rounded-md hover:bg-muted"
+        aria-label="Toggle sidebar"
+      >
+        <Menu className="h-5 w-5" style={{ color: '#174143' }} />
+      </Button>
+    );
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <SidebarProvider style={style as React.CSSProperties}>
           <AuthProvider>
-            <div className="flex h-screen w-full">
+            <div className="flex h-screen w-full bg-white">
               <LeftSidebar />
-              <div className="flex flex-col flex-1">
-                {/* Header: left-aligned cat avatar will appear here when user is authenticated */}
-                <header className="w-full flex items-center justify-between px-4 md:px-6 py-3">
-                  <div className="flex items-center">
-                    <ProfileDrawer />
+              <div className="flex flex-col flex-1 bg-white">
+                {/* Header: left-aligned cat avatar and sidebar toggle will appear here when user is authenticated */}
+                <header className="w-full flex items-center justify-between px-4 md:px-6" style={{paddingTop: '0', paddingBottom: '0', margin: '0'}}>
+                  <div className="flex items-center space-x-0.5" style={{marginTop: '0', paddingTop: '0'}}>
+                    <SidebarToggle />
+                    <ProfileButton />
+                    {/* Logo Pawsitive Feed */}
+                    <div className="w-48 h-48">
+                      <img 
+                        src="/assets/image.png" 
+                        alt="Pawsitive Feed" 
+                        className="w-48 h-48 object-contain"
+                      />
+                    </div>
                   </div>
                   {/* placeholder for right-side header controls if needed */}
                   <div />
                 </header>
 
-                <main className="flex-1 overflow-auto p-6 pb-20 md:pb-6">
-                  <div className="max-w-6xl mx-auto">
+                <main className="flex-1 overflow-auto px-4 md:px-6 pb-20 md:pb-6 bg-white" style={{paddingTop: '10px'}}>
+                  <div className="max-w-6xl mx-auto" style={{marginTop: '0', paddingTop: '0'}}>
                     <Router />
                   </div>
                 </main>

@@ -3,6 +3,7 @@ import { Clock, Droplet, CheckCircle, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { useSidebar } from "@/components/ui/sidebar";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,6 +19,10 @@ import { useToast } from "@/hooks/use-toast";
 export default function Home() {
   const { toast } = useToast();
   const [showFeedDialog, setShowFeedDialog] = useState(false);
+  const { open } = useSidebar();
+  
+  // Adjust gap based on sidebar state
+  const cardGap = open ? '0.5cm' : '1cm';
   
   // Mock data
   // Display food level in grams with a capacity of 50 g
@@ -36,90 +41,293 @@ export default function Home() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Hero / visual header (purely presentational) */}
-      <section className="hero-landing rounded-lg overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 py-12 md:py-20">
-          <div className="md:flex md:items-center md:justify-between">
-            <div className="md:flex-1">
-              {/* Promotional copy removed per request. Hero remains decorative only. */}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-        <p className="text-muted-foreground mt-1">Monitor your cat's feeding status</p>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
+    <div className="space-y-6" style={{marginTop: '0', paddingTop: '0'}}>
+      <div style={{marginTop: '0', paddingTop: '0'}}>
+        <h1 
+          className="text-3xl font-bold mb-6"
+          style={{
+            color: '#174143',
+            fontFamily: 'Poppins',
+            fontStyle: 'normal',
+            fontWeight: 600,
+            lineHeight: 'normal',
+            letterSpacing: '0.84px',
+            marginTop: '0'
+          }}
+        >
+          Dashboard
+        </h1>
+        <p 
+          className="text-muted-foreground"
+          style={{
+            color: '#174143',
+            fontFamily: 'Montserrat',
+            fontStyle: 'normal',
+            fontWeight: 600,
+            lineHeight: 'normal',
+            letterSpacing: '0.42px',
+            marginTop: '2px'
+          }}
+        >
+          Monitor your cat's feeding status
+        </p>
+      </div>      {/* Top Row: Next Feeding and Last Fed */}
+      <div className="grid grid-cols-1 md:grid-cols-2 w-full" style={{gap: cardGap}}>
+        <Card 
+          className="w-full min-w-0"
+          style={{
+            height: '117px',
+            borderRadius: '30px',
+            border: '1px solid #D5D5D5',
+            background: 'linear-gradient(180deg, #F5E5E1 0%, #FFF6F4 100%)'
+          }}
+        >
           <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Next Feeding</CardTitle>
+            <CardTitle 
+              className="text-sm font-medium"
+              style={{
+                color: '#174143',
+                textAlign: 'left',
+                fontFamily: 'Montserrat',
+                fontSize: '12px',
+                fontStyle: 'normal',
+                fontWeight: '600',
+                lineHeight: 'normal',
+                letterSpacing: '0.36px'
+              }}
+            >
+              Next Feeding
+            </CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground" data-testid="text-next-feeding">
+            <div 
+              className="text-2xl font-bold text-foreground" 
+              data-testid="text-next-feeding"
+              style={{
+                color: '#174143',
+                textAlign: 'left',
+                fontFamily: 'Poppins',
+                fontSize: '20px',
+                fontStyle: 'normal',
+                fontWeight: '700',
+                lineHeight: 'normal',
+                letterSpacing: '0.6px'
+              }}
+            >
               {nextFeeding}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p 
+              className="text-xs text-muted-foreground mt-1"
+              style={{
+                color: '#174143',
+                textAlign: 'left',
+                fontFamily: 'Montserrat',
+                fontSize: '10px',
+                fontStyle: 'normal',
+                fontWeight: '600',
+                lineHeight: 'normal',
+                letterSpacing: '0.3px'
+              }}
+            >
               Scheduled for today
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card 
+          className="w-full"
+          style={{
+            height: '117px',
+            borderRadius: '30px',
+            border: '1px solid #D5D5D5',
+            background: 'linear-gradient(180deg, #F5E5E1 0%, #FFF6F4 100%)'
+          }}
+        >
           <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Food Level</CardTitle>
+            <CardTitle 
+              className="text-sm font-medium"
+              style={{
+                color: '#174143',
+                textAlign: 'left',
+                fontFamily: 'Montserrat',
+                fontSize: '12px',
+                fontStyle: 'normal',
+                fontWeight: '600',
+                lineHeight: 'normal',
+                letterSpacing: '0.36px'
+              }}
+            >
+              Last Fed
+            </CardTitle>
+            <CheckCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div 
+              className="text-2xl font-bold text-foreground" 
+              data-testid="text-last-fed"
+              style={{
+                color: '#174143',
+                textAlign: 'left',
+                fontFamily: 'Poppins',
+                fontSize: '20px',
+                fontStyle: 'normal',
+                fontWeight: '700',
+                lineHeight: 'normal',
+                letterSpacing: '0.6px'
+              }}
+            >
+              {lastFed}
+            </div>
+            <p 
+              className="text-xs text-muted-foreground mt-1"
+              style={{
+                color: '#174143',
+                textAlign: 'left',
+                fontFamily: 'Montserrat',
+                fontSize: '10px',
+                fontStyle: 'normal',
+                fontWeight: '600',
+                lineHeight: 'normal',
+                letterSpacing: '0.3px'
+              }}
+            >
+              Today
+            </p>
+          </CardContent>
+        </Card>
+
+
+      </div>
+
+      {/* Bottom Row: Food Level and Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-2 w-full" style={{gap: cardGap}}>
+        <Card 
+          className="w-full"
+          style={{
+            height: '117px',
+            borderRadius: '30px',
+            border: '1px solid #D5D5D5',
+            background: 'linear-gradient(180deg, #F5E5E1 0%, #FFF6F4 100%)'
+          }}
+        >
+          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
+            <CardTitle 
+              className="text-sm font-medium"
+              style={{
+                color: '#174143',
+                textAlign: 'left',
+                fontFamily: 'Montserrat',
+                fontSize: '12px',
+                fontStyle: 'normal',
+                fontWeight: '600',
+                lineHeight: 'normal',
+                letterSpacing: '0.36px'
+              }}
+            >
+              Food Level
+            </CardTitle>
             <Droplet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-bold text-foreground" data-testid="text-food-level">
+                <span 
+                  className="text-2xl font-bold text-foreground" 
+                  data-testid="text-food-level"
+                  style={{
+                    color: '#174143',
+                    textAlign: 'left',
+                    fontFamily: 'Poppins',
+                    fontSize: '18px',
+                    fontStyle: 'normal',
+                    fontWeight: '700',
+                    lineHeight: 'normal',
+                    letterSpacing: '0.54px'
+                  }}
+                >
                   {foodGrams} g / {capacityGrams} g
                 </span>
-                <span className="text-sm text-muted-foreground">remaining</span>
+                <span 
+                  className="text-sm text-muted-foreground"
+                  style={{
+                    color: '#174143',
+                    textAlign: 'left',
+                    fontFamily: 'Montserrat',
+                    fontSize: '10px',
+                    fontStyle: 'normal',
+                    fontWeight: '600',
+                    lineHeight: 'normal',
+                    letterSpacing: '0.3px'
+                  }}
+                >
+                  remaining
+                </span>
               </div>
               <Progress value={foodPercent} className="h-2" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Last Fed</CardTitle>
-            <CheckCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-foreground" data-testid="text-last-fed">
-              {lastFed}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Today
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Zap className="h-5 w-5 text-primary" />
+        <Card 
+          className="w-full"
+          style={{
+            height: '117px',
+            borderRadius: '30px',
+            border: '1px solid #D5D5D5',
+            background: 'linear-gradient(180deg, #F5E5E1 0%, #FFF6F4 100%)'
+          }}
+        >
+        <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
+          <CardTitle 
+            className="text-sm font-medium"
+            style={{
+              color: '#174143',
+              textAlign: 'left',
+              fontFamily: 'Montserrat',
+              fontSize: '12px',
+              fontStyle: 'normal',
+              fontWeight: '600',
+              lineHeight: 'normal',
+              letterSpacing: '0.36px'
+            }}
+          >
             Quick Actions
           </CardTitle>
+          <img 
+            src="/assets/Group (2).png"
+            alt="Quick Actions Icon"
+            className="h-4 w-4"
+            style={{
+              objectFit: 'contain'
+            }}
+          />
         </CardHeader>
         <CardContent>
           <Button 
             onClick={() => setShowFeedDialog(true)} 
-            className="w-full md:w-auto"
+            className="w-full max-w-[263px]"
             data-testid="button-feed-now"
+            style={{
+              height: '39px',
+              flexShrink: 0,
+              borderRadius: '12px',
+              background: '#815247',
+              color: '#FFF',
+              textAlign: 'center',
+              fontFamily: 'Poppins',
+              fontSize: '16px',
+              fontStyle: 'normal',
+              fontWeight: '700',
+              lineHeight: 'normal',
+              letterSpacing: '0.48px'
+            }}
           >
             Feed Now
           </Button>
         </CardContent>
-      </Card>
+        </Card>
+      </div>
 
       <AlertDialog open={showFeedDialog} onOpenChange={setShowFeedDialog}>
         <AlertDialogContent>

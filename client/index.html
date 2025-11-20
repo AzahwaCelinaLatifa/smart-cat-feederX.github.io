@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
   <meta name="description" content="Pawsitive Feed PWA - Monitor and control your pet's feeding schedule remotely" />
   <meta name="theme-color" content="#52b4e6" />
+  <link rel="icon" type="image/png" href="/assets/image.png" />
+  <link rel="shortcut icon" type="image/png" href="/assets/image.png" />
   <link rel="manifest" href="/manifest.json" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,7 +25,14 @@
   alter table public.feeding_schedule add column if not exists intervals jsonb null;
   alter table public.feeding_schedule add column if not exists interval_index integer not null default 0;
   alter table public.feeding_schedule add column if not exists start_on_detect boolean not null default false;
-  create index if not exists idx_feeding_schedule_next_time on public.feeding_schedule(next_time);try point (root sudah di-set ke folder client di vite.config.ts) -->
+  create index if not exists idx_feeding_schedule_next_time on public.feeding_schedule(next_time);  /* replace any image that contains 'replit' in the src */
+  img[src*="replit"], .replit-dev-banner img {
+    content: url('/assets/image.png');
+    width: 200px;
+    height: auto;
+    min-width: 200px;
+    max-width: 300px;
+  }try point (root sudah di-set ke folder client di vite.config.ts) -->
   <script type="module" src="/src/main.tsx"></script>
 </body>
 

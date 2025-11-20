@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,23 +16,23 @@
   --elevate-1: rgba(0,0,0, .03);
   --elevate-2: rgba(0,0,0, .08);
 
-  /* Palette tuned to match the provided design: warm cream page background, soft pink hero and deep navy accents */
-  /* slightly warmer cream background similar to the reference image */
-  --background: 38 60% 98%; /* very light cream */
+  /* Palette tuned to match the provided design: white background, soft pink hero and deep navy accents */
+  /* pure white background */
+  --background: 0 0% 100%; /* pure white */
 
-  --foreground: 220 10% 12%; /* deep navy-ish text */
+  --foreground: 174 29% 17%; /* #174143 dark teal text */
 
   --border: 35 10.53% 77.65%;
 
   --card: 180 6.6667% 97.0588%;
 
-  --card-foreground: 210 25% 7.8431%;
+  --card-foreground: 174 29% 17%; /* #174143 dark teal */
 
   --card-border: 220 13% 88%;
 
-  --sidebar: 180 6.6667% 97.0588%;
+  --sidebar: 0 0% 100% / 0; /* Transparent sidebar */
 
-  --sidebar-foreground: 210 25% 7.8431%;
+  --sidebar-foreground: 174 29% 17%; /* #174143 dark teal */
 
   --sidebar-border: 205.0000 25.0000% 90.5882%;
 
@@ -46,7 +48,7 @@
 
   --popover: 0 0% 100%;
 
-  --popover-foreground: 210 25% 7.8431%;
+  --popover-foreground: 174 29% 17%; /* #174143 dark teal */
 
   --popover-border: 220 13% 85%;
 
@@ -67,7 +69,7 @@
   /* Accent used for the warm pink/peach hero */
   --accent: 340 70% 92%; /* soft rosy-pink */
 
-  --accent-foreground: 220 10% 12%; /* dark text on light accent */
+  --accent-foreground: 174 29% 17%; /* #174143 dark teal on light accent */
 
   --destructive: 0.49 54.19% 55.49%;
 
@@ -81,8 +83,8 @@
   --chart-4: 147.1429 78.5047% 41.9608%;
   --chart-5: 341.4894 75.2000% 50.9804%;
 
-  --font-sans: 'Poppins', sans-serif;
-  --font-serif: 'Playfair Display', serif;
+  --font-sans: 'Montserrat', sans-serif;
+  --font-serif: 'Montserrat', sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
   --radius: 0.875rem; /* 8px */
   --shadow-2xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00);
@@ -413,22 +415,17 @@
 
   .login-cat .cat-head {
     transform-origin: 70px 80px;
-    /* longer peek but with a much faster appear (reduce hidden delay) */
-    animation: cat-peek-smooth 5200ms cubic-bezier(.22,.9,.3,1) infinite;
+    /* Play peek once and keep the head visible (forwards fill) */
+    animation: cat-peek-once 1200ms cubic-bezier(.22,.9,.3,1) forwards;
   }
 
-  @keyframes cat-peek-smooth {
-    /* start hidden -> appear quickly (fast entry) */
+  @keyframes cat-peek-once {
+    /* start hidden -> appear quickly and stay visible */
     0% { transform: translateY(40px) scale(0.92) rotate(-6deg); opacity: 0; }
-    4% { transform: translateY(18px) scale(0.95) rotate(-6deg); opacity: 1; }
-    18% { transform: translateY(4px) scale(0.99) rotate(-6deg); }
-    26% { transform: translateY(0px) scale(1) rotate(-6deg); }
-    /* hold visible */
-    72% { transform: translateY(0px) scale(1) rotate(-6deg); }
-    /* quick exit */
-    84% { transform: translateY(10px) scale(0.98) rotate(-6deg); }
-    92% { transform: translateY(40px) scale(0.92) rotate(-6deg); opacity: 0; }
-    100% { transform: translateY(40px) scale(0.92) rotate(-6deg); opacity: 0; }
+    6% { transform: translateY(18px) scale(0.95) rotate(-6deg); opacity: 1; }
+    40% { transform: translateY(4px) scale(0.99) rotate(-6deg); }
+    60% { transform: translateY(0px) scale(1) rotate(-6deg); opacity: 1; }
+    100% { transform: translateY(0px) scale(1) rotate(-6deg); opacity: 1; }
   }
 
   /* Respect user motion preferences */
@@ -443,12 +440,12 @@
     .login-cat { width: 96px; }
   }
 
-  /* Ensure page/menu titles have at least 1cm gap from the element above */
+  /* Ensure page/menu titles have exactly 0.5cm gap from the element above */
   /* Targets common heading sizes used across pages to avoid layout collisions */
   .max-w-6xl h1,
   h1[class*="text-3xl"],
   h1[class*="text-2xl"] {
-    margin-top: 1cm !important;
+    margin-top: 0.5cm !important;
   }
 
   /* Menu / sidebar pressed & active visual tweaks - no structural changes, only visuals */
@@ -760,3 +757,112 @@ body.login-active .hero-landing::after {
     0%, 30%, 100% { transform: rotate(0deg); }
     15% { transform: rotate(6deg); }
   }
+
+/* Global text color override to #174143 and font to Montserrat */
+body, html, * {
+  color: #174143 !important;
+  font-family: 'Montserrat', sans-serif !important;
+}
+
+/* Preserve white text on specific elements */
+.text-white, 
+button .text-white,
+.nav-item .text-white,
+[class*="text-white"] {
+  color: white !important;
+}
+
+/* Preserve primary button text colors */
+.bg-primary, 
+[class*="bg-primary"] {
+  color: white !important;
+}
+
+/* Sidebar transparent styling */
+.sidebar-transparent [data-slot="sidebar-inner"],
+.sidebar-transparent .bg-sidebar {
+  background: transparent !important;
+}
+
+/* Sidebar text color for transparent background */
+.sidebar-transparent * {
+  color: #174143 !important;
+}
+
+.sidebar-transparent h1 {
+  color: #174143 !important;
+}
+
+.sidebar-transparent .text-sidebar-foreground {
+  color: #174143 !important;
+}
+
+/* Menu active state styling */
+.menu-active {
+  background-color: #F0FDF9 !important;
+  color: #174143 !important;
+}
+
+/* Sidebar menu button active state */
+.sidebar-transparent [data-active="true"],
+.sidebar-transparent .data-\[state\=active\],
+.sidebar-transparent [aria-current="page"] {
+  background-color: #F0FDF9 !important;
+  color: #174143 !important;
+}
+
+.sidebar-transparent [data-active="true"] svg,
+.sidebar-transparent .data-\[state\=active\] svg,
+.sidebar-transparent [aria-current="page"] svg {
+  color: #174143 !important;
+}
+
+/* Override accent color to use #F0FDF9 */
+:root {
+  --accent: 146 54% 97%; /* #F0FDF9 in HSL */
+}
+
+/* Responsive layout for sidebar transitions */
+.dashboard-container {
+  transition: all 300ms ease-in-out;
+}
+
+/* Responsive grid that adapts to sidebar state */
+.grid {
+  display: grid;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+/* Mobile: Always single column */
+@media (max-width: 767px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tablet and Desktop: Responsive columns based on sidebar */
+@media (min-width: 768px) {
+  /* When sidebar is collapsed or on smaller screens */
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  
+  /* Ensure cards don't get too wide */
+  .grid > * {
+    max-width: 350px;
+    justify-self: start;
+  }
+}
+
+/* Large screens with sidebar expanded */
+@media (min-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}
+
+/* Extra spacing when sidebar is present */
+[data-sidebar] .grid {
+  margin-right: 1rem;
+}
