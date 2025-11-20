@@ -35,7 +35,7 @@ export function ProfileSidebar({ isOpen, onClose }: ProfileSidebarProps) {
             width: '390px',
             height: '214px',
             flexShrink: 0,
-            borderRadius: '29px',
+            borderRadius: '0',
             opacity: 0.9,
             background: 'linear-gradient(180deg, rgba(66, 122, 118, 0.80) 0%, rgba(245, 229, 225, 0.90) 50%, #FFF 100%)',
             zIndex: -1

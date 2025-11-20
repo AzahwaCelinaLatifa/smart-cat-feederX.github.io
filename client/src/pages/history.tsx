@@ -192,7 +192,7 @@ export default function History() {
   const [hoveredBar, setHoveredBar] = useState<number | null>(null);
 
   return (
-    <div className="space-y-6" style={{marginTop: '0', paddingTop: '0'}}>
+    <div className="space-y-6" style={{marginTop: '-20px', paddingTop: '0', height: '100%', overflowY: 'auto', overflowX: 'hidden'}}>
       <div className="flex items-center justify-between" style={{marginTop: '0', paddingTop: '0'}}>
         <div style={{marginTop: '0', paddingTop: '0'}}>
           <h1 
@@ -218,7 +218,7 @@ export default function History() {
               fontWeight: 600,
               lineHeight: 'normal',
               letterSpacing: '0.42px',
-              marginTop: '2px'
+              marginTop: '-10px'
             }}
           >
             View past feeding records
@@ -232,7 +232,7 @@ export default function History() {
             data-testid="button-clear-history"
           >
             <img 
-              src="/assets/Vector.png"
+              src="/assets/uil_trash.svg"
               alt="Delete"
               className="h-4 w-4 mr-2"
               style={{
@@ -268,7 +268,7 @@ export default function History() {
               background: view === "list" 
                 ? 'linear-gradient(0deg, #174143 0%, #174143 100%)'
                 : 'transparent',
-              color: '#FFFFFF',
+              color: 'white',
               textAlign: 'center',
               fontFamily: 'Montserrat',
               fontSize: '14px',
@@ -276,7 +276,9 @@ export default function History() {
               fontWeight: 600,
               lineHeight: 'normal',
               letterSpacing: '0.42px',
-              border: 'none'
+              border: 'none',
+              WebkitTextFillColor: 'white',
+              opacity: 1
             }}
           >
             History
@@ -293,7 +295,7 @@ export default function History() {
               background: view === "analytics" 
                 ? 'linear-gradient(0deg, #174143 0%, #174143 100%)'
                 : 'transparent',
-              color: '#FFFFFF',
+              color: 'white',
               textAlign: 'center',
               fontFamily: 'Montserrat',
               fontSize: '14px',
@@ -301,7 +303,9 @@ export default function History() {
               fontWeight: 600,
               lineHeight: 'normal',
               letterSpacing: '0.42px',
-              border: 'none'
+              border: 'none',
+              WebkitTextFillColor: 'white',
+              opacity: 1
             }}
           >
             Analytics
