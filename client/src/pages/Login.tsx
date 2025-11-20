@@ -104,7 +104,7 @@ const [loading, setLoading] = useState(false);
   }, []);
 
   return (
-    <div className="min-h-screen w-full fixed inset-0" style={{
+    <div className="login-page-root min-h-screen w-full fixed inset-0" style={{
       background: 'linear-gradient(180deg, #F5E5E1 0%, #427A76 51.39%, #174143 78.39%)'
     }}>
 

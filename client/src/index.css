@@ -716,6 +716,14 @@ body.login-active .hero-landing::after {
   content: none !important;
 }
 
+/* Center the login page content only when the login route is active */
+body.login-active .login-page-root {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  min-height: 100vh !important;
+}
+
   /* Enhanced cat styling: eyes, pupils, whisker movement and blink animation */
   .login-cat .cat-ear { transform-origin: center bottom; }
   .login-cat .cat-ear--left { animation: ear-tilt-left 5200ms ease-in-out infinite; }
