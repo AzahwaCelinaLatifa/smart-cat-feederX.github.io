@@ -103,7 +103,6 @@ export default function Control() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel data-testid="button-cancel-manual-feed">Cancel</AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleFeedNow} 
               data-testid="button-confirm-manual-feed"
@@ -116,6 +115,7 @@ export default function Control() {
             >
               Confirm
             </AlertDialogAction>
+            <AlertDialogCancel data-testid="button-cancel-manual-feed">Cancel</AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
