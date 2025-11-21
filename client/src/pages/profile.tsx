@@ -11,10 +11,12 @@ import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
+import { useLocation } from "wouter";
 
 export default function Profile() {
   const { toast } = useToast();
   const { user } = useAuth();
+  const [, navigate] = useLocation();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [autoFeeding, setAutoFeeding] = useState(true);
 
@@ -67,12 +69,13 @@ export default function Profile() {
 
   const confirmLogout = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
       setLogoutOpen(false);
-      toast({ title: "Logged out", description: "You have been successfully logged out" });
+      await supabase.auth.signOut();
+      // Force clear all local data and reload
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = '/';
     } catch (e: any) {
-      setLogoutOpen(false);
       toast({ title: "Error", description: e?.message || "Could not log out" });
     }
   };
