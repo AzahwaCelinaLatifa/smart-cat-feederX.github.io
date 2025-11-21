@@ -467,16 +467,6 @@ export default function Profile() {
             <DialogFooter>
               <div className="flex gap-2">
                 <Button 
-                  variant="ghost" 
-                  onClick={() => setLogoutOpen(false)}
-                  style={{
-                    color: '#815247',
-                    borderColor: '#815247'
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button 
                   onClick={confirmLogout}
                   style={{
                     backgroundColor: '#815247',
@@ -486,6 +476,16 @@ export default function Profile() {
                   className="hover:opacity-90"
                 >
                   Log out
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  onClick={() => setLogoutOpen(false)}
+                  style={{
+                    color: '#815247',
+                    borderColor: '#815247'
+                  }}
+                >
+                  Cancel
                 </Button>
               </div>
             </DialogFooter>

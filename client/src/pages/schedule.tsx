@@ -13,31 +13,47 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 
-import { getSchedules, addSchedule, updateSchedule, deleteSchedule, type ApiSchedule } from "@/lib/schedule";
+interface LocalSchedule {
+  id: string;
+  intervals: number[];
+  portion: number;
+  active: boolean;
+}
+
+const STORAGE_KEY = 'feeding_schedules';
 
 export default function SchedulePage() {
   const { toast } = useToast();
-  const [schedules, setSchedules] = useState<ApiSchedule[]>([]);
+  const [schedules, setSchedules] = useState<LocalSchedule[]>([]);
   const [showDialog, setShowDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
-  // Portion and Active are now implicit defaults (portion=1, active=true)
   const [intervals, setIntervals] = useState<number[]>([4, 6, 8]);
-  // Start-on-detect is implicit (no toggle in UI)
 
-  const refresh = async () => {
+  const loadSchedules = () => {
     try {
-      const data = await getSchedules();
-      setSchedules(data);
-    } catch (e: any) {
-      toast({ title: "Failed to load schedules", description: e?.message || String(e), variant: "destructive" });
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        setSchedules(JSON.parse(stored));
+      }
+    } catch (e) {
+      console.error('Failed to load schedules from localStorage', e);
+    }
+  };
+
+  const saveSchedules = (newSchedules: LocalSchedule[]) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newSchedules));
+      setSchedules(newSchedules);
+    } catch (e) {
+      console.error('Failed to save schedules to localStorage', e);
     }
   };
 
   useEffect(() => {
-    refresh();
+    loadSchedules();
   }, []);
-
-  // Removed time-based helpers; schedule starts on detection implicitly
 
   const openAdd = () => {
     setEditingId(null);
@@ -45,44 +61,55 @@ export default function SchedulePage() {
     setShowDialog(true);
   };
 
-  const openEdit = (s: ApiSchedule) => {
+  const openEdit = (s: LocalSchedule) => {
     setEditingId(s.id);
     setIntervals(s.intervals && s.intervals.length ? s.intervals : [4, 6, 8]);
     setShowDialog(true);
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     try {
-      // validate intervals: must be array of positive integers
       if (!intervals || !intervals.length || intervals.some((n) => !Number.isFinite(n) || n <= 0)) {
         throw new Error("Please provide one or more positive interval values (hours)");
       }
 
-      // Implicit defaults: portion=1, active=true
-      const payload: any = { portion: 1, active: true };
-      // Always use interval schedule, start on detection implicitly
-      if (intervals && intervals.length) payload.intervals = intervals;
-      payload.start_on_detect = true;
-
       if (editingId) {
-        await updateSchedule(editingId, payload);
+        const updated = schedules.map(s => 
+          s.id === editingId 
+            ? { ...s, intervals, portion: 1, active: true }
+            : s
+        );
+        saveSchedules(updated);
         toast({ title: "Updated", description: "Schedule updated" });
       } else {
-        await addSchedule(payload);
+        const newSchedule: LocalSchedule = {
+          id: Date.now().toString(),
+          intervals,
+          portion: 1,
+          active: true
+        };
+        saveSchedules([...schedules, newSchedule]);
         toast({ title: "Created", description: "Schedule created" });
       }
       setShowDialog(false);
-      await refresh();
     } catch (e: any) {
       toast({ title: "Save failed", description: e?.message || String(e), variant: "destructive" });
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const openDeleteDialog = (id: string) => {
+    setDeleteId(id);
+    setShowDeleteDialog(true);
+  };
+
+  const confirmDelete = () => {
+    if (!deleteId) return;
     try {
-      await deleteSchedule(id);
+      const filtered = schedules.filter(s => s.id !== deleteId);
+      saveSchedules(filtered);
       toast({ title: "Deleted", description: "Schedule removed" });
-      await refresh();
+      setShowDeleteDialog(false);
+      setDeleteId(null);
     } catch (e: any) {
       toast({ title: "Delete failed", description: e?.message || String(e), variant: "destructive" });
     }
@@ -124,11 +151,12 @@ export default function SchedulePage() {
   <div className="z-10">
     <Button 
       onClick={openAdd}
+      disabled={schedules.length > 0}
       style={{
         width: '95px',
         height: '48px',
         flexShrink: 0,
-        background: 'linear-gradient(90deg, #427A76 0.01%, #174143 50.5%)',
+        background: schedules.length > 0 ? '#CCCCCC' : 'linear-gradient(90deg, #427A76 0.01%, #174143 50.5%)',
         filter: 'drop-shadow(0 3px 3.2px rgba(0, 0, 0, 0.25))',
         border: 'none',
         color: '#FFF',
@@ -137,7 +165,9 @@ export default function SchedulePage() {
         fontStyle: 'normal',
         fontWeight: 600,
         lineHeight: 'normal',
-        letterSpacing: '0.42px'
+        letterSpacing: '0.42px',
+        cursor: schedules.length > 0 ? 'not-allowed' : 'pointer',
+        opacity: schedules.length > 0 ? 0.6 : 1
       }}
     >
       <img 
@@ -159,6 +189,105 @@ export default function SchedulePage() {
 </div>
 
 
+
+      {/* Schedules List */}
+      <div className="space-y-4 mb-8">
+        {schedules.length === 0 ? (
+          <Card className="p-8 text-center">
+            <p 
+              style={{
+                color: '#6C6C6C',
+                fontFamily: 'Montserrat',
+                fontSize: '14px',
+                fontWeight: 400
+              }}
+            >
+              No schedules yet. Click "Add" to create your first feeding schedule.
+            </p>
+          </Card>
+        ) : (
+          schedules.map((schedule) => (
+            <Card 
+              key={schedule.id}
+              style={{
+                borderRadius: '20px',
+                border: '0.5px solid #797979',
+                background: 'linear-gradient(180deg, #F5E5E1 7.21%, #FFF6F4 100%)',
+                padding: '16px'
+              }}
+            >
+              <CardContent className="p-0">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Clock 
+                        className="h-5 w-5" 
+                        style={{ color: '#174143' }}
+                      />
+                      <h3 
+                        style={{
+                          color: '#174143',
+                          fontFamily: 'Poppins',
+                          fontSize: '16px',
+                          fontWeight: 600,
+                          letterSpacing: '0.48px'
+                        }}
+                      >
+                        Feeding Intervals
+                      </h3>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {schedule.intervals.map((interval, idx) => (
+                        <div 
+                          key={idx}
+                          className="text-white"
+                          style={{
+                            padding: '4px 12px',
+                            borderRadius: '12px',
+                            background: '#427A76',
+                            fontFamily: 'Montserrat',
+                            fontSize: '12px',
+                            fontWeight: 600
+                          }}
+                        >
+                          {interval} hours
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => openEdit(schedule)}
+                      style={{
+                        color: '#174143'
+                      }}
+                    >
+                      <Edit3 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => openDeleteDialog(schedule.id)}
+                    >
+                      <img 
+                        src="/assets/uil_trash.svg"
+                        alt="Delete"
+                        className="h-5 w-5"
+                        style={{
+                          objectFit: 'contain',
+                          filter: 'none'
+                        }}
+                      />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
 
       {/* Dialog */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
@@ -332,6 +461,92 @@ export default function SchedulePage() {
             <Button 
               variant="outline" 
               onClick={() => { setShowDialog(false); setEditingId(null); }}
+              style={{
+                width: '217px',
+                height: '29px',
+                borderRadius: '20px',
+                border: '0.5px solid #797979',
+                color: '#174143',
+                textAlign: 'center',
+                fontFamily: 'Montserrat',
+                fontSize: '14px',
+                fontStyle: 'normal',
+                fontWeight: 600,
+                lineHeight: 'normal',
+                letterSpacing: '0.42px',
+                background: 'transparent'
+              }}
+            >
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent
+          style={{
+            borderRadius: '18px',
+            background: 'linear-gradient(90deg, #FFF 0.01%, #FFF 50.5%)',
+            boxShadow: '0 3px 3.2px -1px rgba(0, 0, 0, 0.25)'
+          }}
+        >
+          <DialogHeader className="text-center">
+            <DialogTitle 
+              style={{
+                color: '#174143',
+                textAlign: 'center',
+                fontFamily: 'Poppins',
+                fontSize: '20px',
+                fontStyle: 'normal',
+                fontWeight: 600,
+                lineHeight: 'normal',
+                letterSpacing: '0.6px'
+              }}
+            >
+              Delete Schedule
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p 
+              style={{
+                color: '#6C6C6C',
+                textAlign: 'center',
+                fontFamily: 'Montserrat',
+                fontSize: '14px',
+                fontWeight: 400,
+                lineHeight: '1.5'
+              }}
+            >
+              Are you sure you want to delete this feeding schedule?
+            </p>
+          </div>
+          <DialogFooter className="flex flex-col gap-3">
+            <Button 
+              onClick={confirmDelete}
+              style={{
+                width: '217px',
+                height: '29px',
+                borderRadius: '20px',
+                background: '#815247',
+                color: '#FFF',
+                textAlign: 'center',
+                fontFamily: 'Montserrat',
+                fontSize: '14px',
+                fontStyle: 'normal',
+                fontWeight: 600,
+                lineHeight: 'normal',
+                letterSpacing: '0.42px',
+                border: 'none'
+              }}
+              className="hover:opacity-90"
+            >
+              Delete
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => { setShowDeleteDialog(false); setDeleteId(null); }}
               style={{
                 width: '217px',
                 height: '29px',

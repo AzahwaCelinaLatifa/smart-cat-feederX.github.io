@@ -374,7 +374,6 @@ export default function Home() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel data-testid="button-cancel-feed">Cancel</AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleFeedNow} 
               data-testid="button-confirm-feed"
@@ -386,6 +385,7 @@ export default function Home() {
             >
               Confirm
             </AlertDialogAction>
+            <AlertDialogCancel data-testid="button-cancel-feed">Cancel</AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
