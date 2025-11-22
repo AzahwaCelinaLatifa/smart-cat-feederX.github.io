@@ -51,7 +51,7 @@ function Router() {
 
 function App() {
   const style = {
-    "--sidebar-width": "20rem",
+    "--sidebar-width": "16rem",
     "--sidebar-width-icon": "3rem",
   };
 
@@ -79,7 +79,7 @@ function App() {
             }}
           >
             <img 
-              src="/assets/solar_cat-outline.svg" 
+              src="/assets/solar_cat-broken.png" 
               alt="Profile" 
               className="w-full h-full object-cover"
             />
@@ -130,25 +130,17 @@ function App() {
               <LeftSidebar />
               <div className="flex flex-col flex-1 bg-white">
                 {/* Header: left-aligned cat avatar and sidebar toggle will appear here when user is authenticated */}
-                <header className="w-full flex items-center justify-between px-4 md:px-6" style={{paddingTop: '1.5cm', paddingBottom: '0', margin: '0', marginTop: '0'}}>
+                <header className="w-full flex items-center justify-between px-4 md:px-6" style={{paddingTop: '0', paddingBottom: '0', margin: '0'}}>
                   <div className="flex items-center space-x-0.5" style={{marginTop: '0', paddingTop: '0'}}>
                     <SidebarToggle />
                     <ProfileButton />
-                    {/* Logo Pawsitive Feed */}
-                    <div style={{width: '180px', height: '80px', overflow: 'hidden', marginTop: '0px'}}>
-                      <img 
-                        src="/assets/image.png" 
-                        alt="Pawsitive Feed" 
-                        style={{width: '192px', height: '192px', objectFit: 'contain', marginTop: '-56px', marginLeft: '-6px'}}
-                      />
-                    </div>
                   </div>
                   {/* placeholder for right-side header controls if needed */}
                   <div />
                 </header>
 
-                <main className="flex-1 overflow-auto pb-20 md:pb-6 bg-white px-4 sm:px-6 lg:px-8" style={{paddingTop: '10px'}}>
-                  <div className="max-w-6xl mx-auto w-full" style={{marginTop: '0', paddingTop: '0'}}>
+                <main className="flex-1 overflow-auto px-4 md:px-6 pb-20 md:pb-6 bg-white" style={{paddingTop: '10px'}}>
+                  <div className="max-w-6xl mx-auto" style={{marginTop: '0', paddingTop: '0'}}>
                     <Router />
                   </div>
                 </main>

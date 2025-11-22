@@ -716,12 +716,49 @@ body.login-active .hero-landing::after {
   content: none !important;
 }
 
+/* Force the login gradient to cover the full viewport and prevent parent backgrounds from showing */
+body.login-active,
+body.login-active #root,
+body.login-active main,
+body.login-active .flex-1 {
+  background: transparent !important;
+}
+
+/* Make the login page root cover the viewport and center its content */
+body.login-active .login-page-root {
+  position: fixed !important;
+  inset: 0 !important;
+  min-height: 100vh !important;
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  z-index: 40;
+}
+
 /* Center the login page content only when the login route is active */
 body.login-active .login-page-root {
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
   min-height: 100vh !important;
+}
+
+/* Corner logo visible only on the login page (top-left) */
+body.login-active .login-corner-logo {
+  position: fixed !important;
+  top: 16px !important;
+  left: 16px !important;
+  z-index: 60 !important;
+}
+body.login-active .login-corner-logo img {
+  width: 56px !important;
+  height: auto !important;
+  display: block !important;
+}
+
+@media (max-width: 420px) {
+  body.login-active .login-corner-logo img { width: 44px !important; }
 }
 
   /* Enhanced cat styling: eyes, pupils, whisker movement and blink animation */
@@ -873,49 +910,4 @@ button .text-white,
 /* Extra spacing when sidebar is present */
 [data-sidebar] .grid {
   margin-right: 1rem;
-}
-
-/* Prevent sidebar icons from shrinking when collapsed */
-.sidebar-icon {
-  flex-shrink: 0 !important;
-}
-
-[data-state="collapsed"] .sidebar-icon,
-[data-collapsible="icon"] .sidebar-icon {
-  width: var(--icon-width) !important;
-  height: var(--icon-height) !important;
-  min-width: var(--icon-width) !important;
-  min-height: var(--icon-height) !important;
-  flex-shrink: 0 !important;
-}
-
-/* Force menu text colors based on active state */
-[data-active="true"] span {
-  color: #174143 !important;
-}
-
-[data-active="false"] span {
-  color: #FFFFFF !important;
-}
-
-/* Responsive utilities */
-@media (max-width: 640px) {
-  .space-y-6 {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-}
-
-/* Notification icon styling */
-.notification-icon {
-  color: #174143;
-  fill: #174143;
-}
-
-/* Responsive card containers */
-@media (max-width: 768px) {
-  [style*="width: '347px'"] {
-    width: 100% !important;
-    max-width: 347px !important;
-  }
 }
