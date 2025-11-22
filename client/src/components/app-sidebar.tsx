@@ -177,14 +177,14 @@ export function AppSidebar() {
                           } as React.CSSProperties}
                         />
                         <span 
+                          className={isActive ? 'text-green-500' : 'text-white'}
                           style={{
-                            color: isActive ? '#174143 !important' : '#FFFFFF !important',
                             fontFamily: 'Montserrat',
                             fontStyle: 'normal',
                             fontWeight: 600,
                             lineHeight: 'normal',
                             letterSpacing: '0.42px'
-                          } as React.CSSProperties}
+                          }}
                         >
                           {item.title}
                         </span>

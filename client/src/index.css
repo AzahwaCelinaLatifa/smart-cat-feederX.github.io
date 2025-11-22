@@ -292,10 +292,13 @@
 }
 
 @layer utilities {
+  .border-border {
+    border-color: #e5e7eb; /* Example color */
+  }
 
   /* Hide ugly search cancel button in Chrome until we can style it properly */
   input[type="search"]::-webkit-search-cancel-button {
-    @apply hidden;
+    display: none; /* Removed empty ruleset by adding a valid rule */
   }
 
   /* Placeholder styling for contentEditable div */
@@ -304,10 +307,6 @@
     color: hsl(var(--muted-foreground));
     pointer-events: none;
   }
-
-  .no-default-hover-elevate {}
-
-  .no-default-active-elevate {}
 
   .toggle-elevate::before,
   .toggle-elevate-2::before {
@@ -669,6 +668,14 @@
 
     /* Further reduce top spacing on very small screens */
     #root { padding-top: 0.75rem; }
+  }
+
+  .bg-background {
+    background-color: #f9fafb; /* Example color */
+  }
+
+  .text-foreground {
+    color: #1f2937; /* Example color */
   }
 }
 
