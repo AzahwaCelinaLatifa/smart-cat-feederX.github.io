@@ -154,14 +154,16 @@ export function AppSidebar() {
                 return (
                   <SidebarMenuItem key={item.title} style={{ marginBottom: isLast ? 0 : '32px' }}>
                     <SidebarMenuButton asChild isActive={isActive} data-testid={`link-${item.title.toLowerCase()}`} data-active={isActive}>
-                      <Link href={item.url} data-active={isActive}>
+                      <Link href={item.url} data-active={isActive} style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        textDecoration: 'none'
+                      }}>
                         <img 
                           src={item.iconPath} 
                           alt={`${item.title} icon`} 
-                          className="sidebar-icon"
                           style={{
-                            '--icon-width': isHome ? '36px' : '31px',
-                            '--icon-height': isHome ? '36px' : '31px',
                             width: isHome ? '36px' : '31px',
                             height: isHome ? '36px' : '31px',
                             minWidth: isHome ? '36px' : '31px',
@@ -174,11 +176,12 @@ export function AppSidebar() {
                             filter: isActive 
                               ? 'brightness(0) saturate(100%) invert(13%) sepia(18%) saturate(1943%) hue-rotate(138deg) brightness(96%) contrast(93%)'
                               : 'brightness(0) saturate(100%) invert(100%)'
-                          } as React.CSSProperties}
+                          }}
                         />
                         <span 
-                          className={isActive ? 'text-green-500' : 'text-white'}
                           style={{
+                            color: isActive ? '#174143 !important' : '#FFFFFF !important',
+                            WebkitTextFillColor: isActive ? '#174143' : '#FFFFFF',
                             fontFamily: 'Montserrat',
                             fontStyle: 'normal',
                             fontWeight: 600,
