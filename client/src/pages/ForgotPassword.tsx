@@ -46,7 +46,27 @@ export default function ForgotPassword() {
                 <Input type='email' value={email} onChange={e => setEmail(e.target.value)} required />
               </div>
               <CardFooter className='pt-0'>
-                <Button type='submit' className='w-full' disabled={loading}>{loading ? 'Sending…' : 'Send reset link'}</Button>
+                <button 
+                  type='submit' 
+                  className='w-full' 
+                  disabled={loading}
+                  style={{
+                    borderRadius: '30px',
+                    background: '#174143',
+                    color: '#FFFFFF',
+                    WebkitTextFillColor: '#FFFFFF',
+                    padding: '12px 24px',
+                    border: 'none',
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    opacity: loading ? 0.7 : 1,
+                    fontFamily: 'Montserrat',
+                    fontSize: '16px',
+                    fontWeight: 600,
+                    height: '44px'
+                  }}
+                >
+                  {loading ? 'Sending…' : 'Send reset link'}
+                </button>
               </CardFooter>
             </form>
           )}

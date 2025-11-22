@@ -111,20 +111,20 @@ const [loading, setLoading] = useState(false);
         {/* Corner logo (top-left) - rendered here but positioned via CSS for login-only */}
         <div className="login-corner-logo" aria-hidden>
           <img
-            src="/assets/image.png"
+            src="/assets/Black White Bold Modern Studio Logo 8.svg"
             alt="Pawsitive Feed Logo"
             className="object-contain"
-            style={{ width: '500px', height: 'auto' }}
+            style={{ width: '100%', height: 'auto' }}
             onError={(e) => { e.currentTarget.style.display = 'none'; }}
           />
         </div>
 
         {/* Container di atas card: gambar kucing (diletakkan di atas card, centered) */}
-        <div className="flex flex-col items-center justify-center" style={{ gap: '12px', marginBottom: '-100px', zIndex: 10, position: 'relative' }}>
+        <div className="flex flex-col items-center justify-center" style={{ gap: '12px', marginBottom: '-60px', zIndex: 10, position: 'relative' }}>
           <img
             src="/assets/Recorrido Virtual Universidad de La Sabana Utiliza las flechas de tu teclado o tu mouse para desplazarte por las diferentes locaciones. Click aquí para comenzar (4) 1 (1).svg"
             alt="Cute 3D Cat"
-            className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 object-contain"
+            className="w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 object-contain"
           />
         </div>
         <div className="bg-white shadow-xl" style={{
@@ -133,17 +133,37 @@ const [loading, setLoading] = useState(false);
           background: '#FFF'
         }}>
           {/* Toggle */}
-          <div className="px-8 pt-6 pb-2">
+          <div className="px-8 pt-6 pb-2" style={{ position: 'relative', zIndex: 20 }}>
             <div className="flex items-center gap-4 justify-center">
               <button
-                className={`px-8 py-3 rounded-full text-sm font-semibold transition-all ${!isSignUp ? 'bg-teal-800 text-white shadow-md' : 'text-gray-400'}`}
+                type="button"
+                className="px-8 py-3 font-semibold transition-all cursor-pointer shadow-md"
                 onClick={() => setIsSignUp(false)}
+                style={{ 
+                  pointerEvents: 'auto',
+                  borderRadius: '30px',
+                  background: !isSignUp ? '#174143' : '#F5E5E1',
+                  color: !isSignUp ? '#FFFFFF' : '#174143',
+                  border: 'none',
+                  fontSize: '14px',
+                  WebkitTextFillColor: !isSignUp ? '#FFFFFF' : '#174143'
+                }}
               >
                 Sign In
               </button>
               <button
-                className={`px-8 py-3 rounded-full text-sm font-semibold transition-all ${isSignUp ? 'bg-teal-800 text-white shadow-md' : 'text-gray-400'}`}
+                type="button"
+                className="px-8 py-3 font-semibold transition-all cursor-pointer shadow-md"
                 onClick={() => setIsSignUp(true)}
+                style={{ 
+                  pointerEvents: 'auto',
+                  borderRadius: '30px',
+                  background: isSignUp ? '#174143' : '#F5E5E1',
+                  color: isSignUp ? '#FFFFFF' : '#174143',
+                  border: 'none',
+                  fontSize: '14px',
+                  WebkitTextFillColor: isSignUp ? '#FFFFFF' : '#174143'
+                }}
               >
                 Sign Up
               </button>
@@ -151,23 +171,24 @@ const [loading, setLoading] = useState(false);
           </div>
           {/* images moved outside the card */}
           {/* Heading */}
-          <div className="px-8 pt-4 pb-6">
+          <div className="px-8 pt-3 pb-4">
             <h1 className="text-6xl font-bold" style={{
               color: '#174143',
-              textAlign: 'center',
+              textAlign: 'left',
               fontFamily: 'Poppins',
-              fontSize: '48px',
-              fontWeight: 800,
-              letterSpacing: '1.2px'
+              fontSize: '28px',
+              fontWeight: 600,
+              lineHeight: 'normal',
+              letterSpacing: '0.84px'
             }}>{isSignUp ? 'Create Account' : 'Sign In'}</h1>
           </div>
           {/* Form */}
-          <div className="px-8 pb-10">
-            {error && <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl"><p className="text-sm text-red-600">{error}</p></div>}
-            <form onSubmit={handleLogin} className="space-y-6">
+          <div className="px-8 pb-6">
+            {error && <div className="mb-3 p-2 bg-red-50 border border-red-200 rounded-xl"><p className="text-sm text-red-600">{error}</p></div>}
+            <form onSubmit={handleLogin} className="space-y-4">
               <div className="relative" ref={suggestionsRef}>
-                <label className="block text-sm font-medium mb-3" style={{ color: '#6C6C6C', fontFamily: 'Montserrat', fontSize: '14px', fontWeight: 300, letterSpacing: '0.42px' }}>Email</label>
-                <input type="email" value={email} onChange={(e) => { setEmail(e.target.value); setShowSuggestions(true); }} onFocus={() => setShowSuggestions(true)} required className="px-6 py-4 focus:ring-0 focus:border-gray-300 transition-colors text-base" style={{ width: '291px', height: '36px', borderRadius: '20px', border: '0.5px solid #797979', outline: 'none', backgroundColor: '#ffffff' }} />
+                <label className="block mb-2" style={{ color: '#6C6C6C', fontFamily: 'Montserrat', fontSize: '14px', fontStyle: 'normal', fontWeight: 300, lineHeight: 'normal', letterSpacing: '0.42px', width: '295px' }}>Email</label>
+                <input type="email" value={email} onChange={(e) => { setEmail(e.target.value); setShowSuggestions(true); }} onFocus={() => setShowSuggestions(true)} required className="px-6 py-3 focus:ring-0 focus:border-gray-300 transition-colors text-base" style={{ width: '291px', height: '36px', borderRadius: '20px', border: '0.5px solid #797979', outline: 'none', backgroundColor: '#ffffff' }} />
                 {showSuggestions && savedEmails.length > 0 && (
                   <div className="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50">
                     {savedEmails.filter(s => s.includes(email.trim().toLowerCase())).map((s) => (
@@ -177,22 +198,39 @@ const [loading, setLoading] = useState(false);
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-3" style={{ color: '#6C6C6C', fontFamily: 'Montserrat', fontSize: '14px', fontWeight: 300, letterSpacing: '0.42px' }}>Password</label>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="px-6 py-4 focus:ring-0 focus:border-gray-300 transition-colors text-base" style={{ width: '291px', height: '36px', borderRadius: '20px', border: '0.5px solid #797979', outline: 'none', backgroundColor: '#ffffff' }} />
+                <label className="block mb-2" style={{ color: '#6C6C6C', fontFamily: 'Montserrat', fontSize: '14px', fontStyle: 'normal', fontWeight: 300, lineHeight: 'normal', letterSpacing: '0.42px', width: '295px' }}>Password</label>
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="px-6 py-3 focus:ring-0 focus:border-gray-300 transition-colors text-base" style={{ width: '291px', height: '36px', borderRadius: '20px', border: '0.5px solid #797979', outline: 'none', backgroundColor: '#ffffff' }} />
               </div>
-              <div className="text-right pt-2 pb-2">
+              <div className="text-right pt-1 pb-1">
                 {!isSignUp && (
-                  <Link href="/forgot-password" className="text-sm font-medium hover:underline" style={{ color: '#815247', fontFamily: 'Montserrat', fontSize: '14px', fontWeight: 400, lineHeight: '25px', letterSpacing: '0.42px' }}>
+                  <Link href="/forgot-password" className="hover:underline" style={{ color: '#815247', fontFamily: 'Montserrat', fontSize: '14px', fontStyle: 'normal', fontWeight: 400, lineHeight: '25px', letterSpacing: '0.42px', width: '295px', display: 'inline-block' }}>
                     Forgot password?
                   </Link>
                 )}
               </div>
-              <div className="pt-2 flex justify-center">
+              <div className="pt-1 flex justify-start">
                 <button
                   type="submit"
-                  className="w-full py-2 bg-teal-700 text-white rounded-full font-semibold hover:bg-teal-800 transition"
+                  disabled={loading}
+                  className="hover:opacity-90 transition"
+                  style={{
+                    borderRadius: '30px',
+                    background: '#174143',
+                    width: '291px',
+                    height: '44px',
+                    flexShrink: 0,
+                    border: 'none',
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    opacity: loading ? 0.7 : 1,
+                    color: '#FFFFFF',
+                    WebkitTextFillColor: '#FFFFFF',
+                    fontFamily: 'Montserrat',
+                    fontSize: '16px',
+                    fontWeight: 600,
+                    letterSpacing: '0.48px'
+                  }}
                 >
-                  {isSignUp ? 'Create Account' : 'Sign In'}
+                  {loading ? 'Loading...' : (isSignUp ? 'Create Account' : 'Sign In')}
                 </button>
               </div>
             </form>
