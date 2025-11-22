@@ -104,220 +104,95 @@ const [loading, setLoading] = useState(false);
   }, []);
 
   return (
-    <div className="min-h-screen w-full fixed inset-0" style={{
+    <div className="login-page-root min-h-screen w-full flex flex-col items-center justify-center" style={{
       background: 'linear-gradient(180deg, #F5E5E1 0%, #427A76 51.39%, #174143 78.39%)'
     }}>
-
-
-      {/* Content positioned to fill screen */}
-      <div className="flex flex-col items-center justify-center h-full px-4">
-        {/* Logo and 3D Cat illustration - responsive sizing */}
-        <div className="mb-4 flex-shrink-0 flex flex-col items-center space-y-4">
+      <div className="w-full px-4 flex flex-col items-center justify-center">
+        {/* Corner logo (top-left) - rendered here but positioned via CSS for login-only */}
+        <div className="login-corner-logo" aria-hidden>
           <img
             src="/assets/image.png"
             alt="Pawsitive Feed Logo"
-            className="w-48 h-48 object-contain"
+            className="object-contain"
+            style={{ width: '500px', height: 'auto' }}
             onError={(e) => { e.currentTarget.style.display = 'none'; }}
-          />
-          <img
-            src="/Recorrido Virtual Universidad de La Sabana Utiliza las flechas de tu teclado o tu mouse para desplazarte por las diferentes locaciones. Click aquí para comenzar (4) 1 (1).png"
-            alt="Cute 3D Cat"
-            className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 object-contain"
           />
         </div>
 
-        {/* Login Card - responsive sizing for desktop and mobile */}
-        <div 
-          className="bg-white shadow-xl flex-shrink-0"
-          style={{
-            width: 'min(390px, 90vw)',
-            height: 'min(max(536px, 80vh), 90vh)',
-            maxHeight: '90vh',
-            borderRadius: '30px 30px 0 0',
-            background: '#FFF'
-          }}
-        >
-          {/* Tab buttons - EXACT positioning and styling */}
+        {/* Container di atas card: gambar kucing (diletakkan di atas card, centered) */}
+        <div className="flex flex-col items-center justify-center" style={{ gap: '12px', marginBottom: '-100px', zIndex: 10, position: 'relative' }}>
+          <img
+            src="/assets/Recorrido Virtual Universidad de La Sabana Utiliza las flechas de tu teclado o tu mouse para desplazarte por las diferentes locaciones. Click aquí para comenzar (4) 1 (1).svg"
+            alt="Cute 3D Cat"
+            className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 object-contain"
+          />
+        </div>
+        <div className="bg-white shadow-xl" style={{
+          width: 'min(390px, 90vw)',
+          borderRadius: '30px',
+          background: '#FFF'
+        }}>
+          {/* Toggle */}
           <div className="px-8 pt-6 pb-2">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 justify-center">
               <button
-                className={`px-8 py-3 rounded-full text-sm font-semibold transition-all ${
-                  !isSignUp 
-                    ? 'bg-teal-800 text-white shadow-md' 
-                    : 'text-gray-400'
-                }`}
+                className={`px-8 py-3 rounded-full text-sm font-semibold transition-all ${!isSignUp ? 'bg-teal-800 text-white shadow-md' : 'text-gray-400'}`}
                 onClick={() => setIsSignUp(false)}
               >
                 Sign In
               </button>
               <button
-                className={`px-8 py-3 rounded-full text-sm font-semibold transition-all ${
-                  isSignUp 
-                    ? 'bg-teal-800 text-white shadow-md' 
-                    : 'text-gray-400'
-                }`}
+                className={`px-8 py-3 rounded-full text-sm font-semibold transition-all ${isSignUp ? 'bg-teal-800 text-white shadow-md' : 'text-gray-400'}`}
                 onClick={() => setIsSignUp(true)}
               >
                 Sign Up
               </button>
             </div>
           </div>
-
-          {/* Title - EXACT typography and positioning */}
+          {/* images moved outside the card */}
+          {/* Heading */}
           <div className="px-8 pt-4 pb-6">
-            <h1 
-              className="text-4xl font-bold"
-              style={{
-                color: '#174143',
-                textAlign: 'center',
-                fontFamily: 'Poppins',
-                fontSize: '28px',
-                fontStyle: 'normal',
-                fontWeight: 600,
-                lineHeight: 'normal',
-                letterSpacing: '0.84px'
-              }}
-            >
-              {isSignUp ? 'Create Account' : 'Sign In'}
-            </h1>
+            <h1 className="text-6xl font-bold" style={{
+              color: '#174143',
+              textAlign: 'center',
+              fontFamily: 'Poppins',
+              fontSize: '48px',
+              fontWeight: 800,
+              letterSpacing: '1.2px'
+            }}>{isSignUp ? 'Create Account' : 'Sign In'}</h1>
           </div>
-
-          {/* Form - EXACT spacing and styling */}
+          {/* Form */}
           <div className="px-8 pb-10">
-            {error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl">
-                <p className="text-sm text-red-600">{error}</p>
-              </div>
-            )}
-
+            {error && <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl"><p className="text-sm text-red-600">{error}</p></div>}
             <form onSubmit={handleLogin} className="space-y-6">
               <div className="relative" ref={suggestionsRef}>
-                <label 
-                  className="block text-sm font-medium mb-3"
-                  style={{
-                    color: '#6C6C6C',
-                    fontFamily: 'Montserrat',
-                    fontSize: '14px',
-                    fontStyle: 'normal',
-                    fontWeight: 300,
-                    lineHeight: 'normal',
-                    letterSpacing: '0.42px'
-                  }}
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => { setEmail(e.target.value); setShowSuggestions(true); }}
-                  onFocus={() => setShowSuggestions(true)}
-                  required
-                  className="px-6 py-4 focus:ring-0 focus:border-gray-300 transition-colors text-base"
-                  style={{
-                    width: '291px',
-                    height: '36px',
-                    flexShrink: 0,
-                    borderRadius: '20px',
-                    border: '0.5px solid #797979',
-                    outline: 'none',
-                    backgroundColor: '#ffffff'
-                  }}
-                />
+                <label className="block text-sm font-medium mb-3" style={{ color: '#6C6C6C', fontFamily: 'Montserrat', fontSize: '14px', fontWeight: 300, letterSpacing: '0.42px' }}>Email</label>
+                <input type="email" value={email} onChange={(e) => { setEmail(e.target.value); setShowSuggestions(true); }} onFocus={() => setShowSuggestions(true)} required className="px-6 py-4 focus:ring-0 focus:border-gray-300 transition-colors text-base" style={{ width: '291px', height: '36px', borderRadius: '20px', border: '0.5px solid #797979', outline: 'none', backgroundColor: '#ffffff' }} />
                 {showSuggestions && savedEmails.length > 0 && (
                   <div className="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50">
                     {savedEmails.filter(s => s.includes(email.trim().toLowerCase())).map((s) => (
-                      <button
-                        key={s}
-                        type="button"
-                        className="w-full text-left px-4 py-3 hover:bg-gray-50 text-sm"
-                        onMouseDown={(ev) => {
-                          ev.preventDefault();
-                          setEmail(s);
-                          setShowSuggestions(false);
-                        }}
-                      >
-                        {s}
-                      </button>
+                      <button key={s} type="button" className="w-full text-left px-4 py-3 hover:bg-gray-50 text-sm" onMouseDown={(ev) => { ev.preventDefault(); setEmail(s); setShowSuggestions(false); }}>{s}</button>
                     ))}
                   </div>
                 )}
               </div>
-
               <div>
-                <label 
-                  className="block text-sm font-medium mb-3"
-                  style={{
-                    color: '#6C6C6C',
-                    fontFamily: 'Montserrat',
-                    fontSize: '14px',
-                    fontStyle: 'normal',
-                    fontWeight: 300,
-                    lineHeight: 'normal',
-                    letterSpacing: '0.42px'
-                  }}
-                >
-                  Password
-                </label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="px-6 py-4 focus:ring-0 focus:border-gray-300 transition-colors text-base"
-                  style={{
-                    width: '291px',
-                    height: '36px',
-                    flexShrink: 0,
-                    borderRadius: '20px',
-                    border: '0.5px solid #797979',
-                    outline: 'none',
-                    backgroundColor: '#ffffff'
-                  }}
-                />
+                <label className="block text-sm font-medium mb-3" style={{ color: '#6C6C6C', fontFamily: 'Montserrat', fontSize: '14px', fontWeight: 300, letterSpacing: '0.42px' }}>Password</label>
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="px-6 py-4 focus:ring-0 focus:border-gray-300 transition-colors text-base" style={{ width: '291px', height: '36px', borderRadius: '20px', border: '0.5px solid #797979', outline: 'none', backgroundColor: '#ffffff' }} />
               </div>
-
               <div className="text-right pt-2 pb-2">
-                <Link 
-                  href="/forgot-password" 
-                  className="text-sm font-medium hover:underline"
-                  style={{
-                    color: '#815247',
-                    textAlign: 'center',
-                    fontFamily: 'Montserrat',
-                    fontSize: '14px',
-                    fontStyle: 'normal',
-                    fontWeight: 400,
-                    lineHeight: '25px',
-                    letterSpacing: '0.42px'
-                  }}
-                >
-                  Forgot password?
-                </Link>
+                {!isSignUp && (
+                  <Link href="/forgot-password" className="text-sm font-medium hover:underline" style={{ color: '#815247', fontFamily: 'Montserrat', fontSize: '14px', fontWeight: 400, lineHeight: '25px', letterSpacing: '0.42px' }}>
+                    Forgot password?
+                  </Link>
+                )}
               </div>
-
               <div className="pt-2 flex justify-center">
                 <button
                   type="submit"
-                  disabled={loading}
-                  className="transition-colors disabled:opacity-50 shadow-lg"
-                  style={{
-                    width: '291px',
-                    height: '44px',
-                    flexShrink: 0,
-                    borderRadius: '30px',
-                    background: 'linear-gradient(90deg, #174143 0%, #174143 100%)',
-                    color: '#FFF',
-                    textAlign: 'center',
-                    fontFamily: 'Montserrat',
-                    fontSize: '16px',
-                    fontStyle: 'normal',
-                    fontWeight: 600,
-                    lineHeight: 'normal',
-                    letterSpacing: '0.48px',
-                    border: 'none'
-                  }}
+                  className="w-full py-2 bg-teal-700 text-white rounded-full font-semibold hover:bg-teal-800 transition"
                 >
-                  {loading ? "Please wait…" : (isSignUp ? "Create Account" : "Sign In")}
+                  {isSignUp ? 'Create Account' : 'Sign In'}
                 </button>
               </div>
             </form>
