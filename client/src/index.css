@@ -54,7 +54,7 @@
 
   /* Primary as deep navy used for strong bands / CTA backgrounds */
   /* deep navy used for strong bands / CTA backgrounds */
-  --primary: 222 20% 14%; /* slightly darker navy */
+  --primary: 174 29% 17%; /* #174143 dark teal */
 
   --primary-foreground: 0 0% 100%; /* white text on primary */
 
@@ -759,13 +759,13 @@ body.login-active .login-corner-logo {
   z-index: 60 !important;
 }
 body.login-active .login-corner-logo img {
-  width: 56px !important;
+  width: 180px !important;
   height: auto !important;
   display: block !important;
 }
 
 @media (max-width: 420px) {
-  body.login-active .login-corner-logo img { width: 44px !important; }
+  body.login-active .login-corner-logo img { width: 120px !important; }
 }
 
   /* Enhanced cat styling: eyes, pupils, whisker movement and blink animation */

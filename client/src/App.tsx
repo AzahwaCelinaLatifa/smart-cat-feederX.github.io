@@ -27,6 +27,18 @@ import { AuthProvider, useAuth } from "@/context/AuthContext";
 
 function Router() {
   const { user, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#174143] mx-auto"></div>
+          <p className="mt-4 text-[#174143] font-semibold">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <Switch>
       {/* Public auth-related routes */}

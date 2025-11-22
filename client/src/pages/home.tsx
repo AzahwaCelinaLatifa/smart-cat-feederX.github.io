@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Clock, Droplet, CheckCircle, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,13 +26,43 @@ export default function Home() {
   // Adjust margin for right column cards based on sidebar state
   const rightCardMargin = open ? '0px' : '-150px';
   
-  // Mock data
-  // Display food level in grams with a capacity of 150 g
-  const foodPercent = 65; // stored as percent internally
+  // Real-time weight data from ESP32
+  const [foodGrams, setFoodGrams] = useState(0);
+  const [foodPercent, setFoodPercent] = useState(0);
+  const [lastUpdate, setLastUpdate] = useState('Waiting for data...');
   const capacityGrams = 150;
-  const foodGrams = Math.round((foodPercent / 100) * capacityGrams);
   const nextFeeding = "7:00 PM";
   const lastFed = "2:00 PM";
+
+  // Fetch weight data from backend
+  useEffect(() => {
+    const updateFoodLevel = async () => {
+      try {
+        const response = await fetch('/api/weight');
+        const data = await response.json();
+        
+        const weight = parseFloat(data.weight) || 0;
+        const percentage = parseFloat(data.percentage) || 0;
+        
+        setFoodGrams(Math.round(weight));
+        setFoodPercent(Math.min(percentage, 100));
+        
+        const now = new Date();
+        setLastUpdate(`✓ Updated: ${now.toLocaleTimeString()}`);
+        
+        console.log(`📊 Weight: ${weight}g (${percentage}%)`);
+      } catch (error) {
+        console.error('❌ Error:', error);
+        setLastUpdate('❌ Connection error');
+      }
+    };
+
+    // Update every 1 second
+    const interval = setInterval(updateFoodLevel, 1000);
+    updateFoodLevel(); // Run immediately
+    
+    return () => clearInterval(interval);
+  }, []);
 
   const handleFeedNow = () => {
     setShowFeedDialog(false);
@@ -267,10 +297,11 @@ export default function Home() {
             <div className="space-y-2">
               <div className="flex items-baseline gap-2">
                 <span 
+                  id="currentWeight"
                   className="text-2xl font-bold text-foreground" 
                   data-testid="text-food-level"
                   style={{
-                    color: '#174143',
+                    color: '#815247',
                     textAlign: 'left',
                     fontFamily: 'Poppins',
                     fontSize: '18px',
@@ -298,7 +329,26 @@ export default function Home() {
                   remaining
                 </span>
               </div>
-              <Progress value={foodPercent} className="h-2" style={{'--progress-color': '#BEA29B'} as React.CSSProperties} />
+              <div style={{position: 'relative'}}>
+                <Progress 
+                  id="progressBar"
+                  value={foodPercent} 
+                  className="h-2" 
+                  style={{
+                    '--progress-color': foodPercent < 20 ? '#e74c3c' : foodPercent < 50 ? '#f39c12' : '#8b5a3c'
+                  } as React.CSSProperties} 
+                />
+              </div>
+              <div 
+                id="lastUpdate" 
+                style={{
+                  fontSize: '10px',
+                  color: '#999',
+                  fontFamily: 'Montserrat'
+                }}
+              >
+                {lastUpdate}
+              </div>
             </div>
           </CardContent>
         </Card>

@@ -45,45 +45,74 @@
       <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
       <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
     </div>
+    
+    <!-- Food Level Card -->
+    <div class="food-level-card" style="background: #f5e6e8; padding: 24px; border-radius: 16px; margin: 16px auto; max-width: 400px;">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+        <span style="font-weight: 600; color: #2c3e50; font-family: 'Montserrat', sans-serif;">Food Level</span>
+        <span>💧</span>
+      </div>
+      
+      <div style="font-size: 28px; font-weight: bold; color: #2c3e50; margin: 16px 0; font-family: 'Poppins', sans-serif;">
+        <span id="currentWeight" style="color: #8b5a3c; font-size: 36px;">--</span> g / 
+        <span>150</span> g
+        <span style="font-size: 14px; color: #666; margin-left: 8px; font-family: 'Montserrat', sans-serif;">remaining</span>
+      </div>
+      
+      <!-- Progress Bar -->
+      <div style="width: 100%; height: 12px; background: #e0d5d7; border-radius: 6px; overflow: hidden; margin-top: 12px;">
+        <div id="progressBar" style="height: 100%; background: linear-gradient(90deg, #8b5a3c, #a67c52); transition: width 0.5s ease; border-radius: 6px; width: 0%;"></div>
+      </div>
+      
+      <div id="lastUpdate" style="margin-top: 8px; font-size: 12px; color: #999; font-family: 'Montserrat', sans-serif;">
+        Waiting for data...
+      </div>
+    </div>
+    
     <p id="load">Firebase SDK Loading&hellip;</p>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const loadEl = document.querySelector('#load');
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.firestore().doc('/foo/bar').get().then(() => { });
-        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        // firebase.analytics(); // call to activate
-        // firebase.analytics().logEvent('tutorial_completed');
-        // firebase.performance(); // call to activate
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+   <script>
+console.log('🔄 Starting weight monitor...');
 
-        try {
-          let app = firebase.app();
-          let features = [
-            'auth', 
-            'database', 
-            'firestore',
-            'functions',
-            'messaging', 
-            'storage', 
-            'analytics', 
-            'remoteConfig',
-            'performance',
-          ].filter(feature => typeof app[feature] === 'function');
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
-        }
-      });
-    </script>
+function updateFoodLevel() {
+  fetch('/api/weight')
+    .then(response => response.json())
+    .then(data => {
+      const weight = parseFloat(data.weight) || 0;
+      const percentage = parseFloat(data.percentage) || 0;
+      
+      // Update weight number
+      document.getElementById('currentWeight').textContent = weight.toFixed(0);
+      
+      // Update progress bar
+      const progressBar = document.getElementById('progressBar');
+      progressBar.style.width = Math.min(percentage, 100) + '%';
+      
+      // Change color based on level
+      if (percentage < 20) {
+        progressBar.style.background = 'linear-gradient(90deg, #e74c3c, #c0392b)';
+      } else if (percentage < 50) {
+        progressBar.style.background = 'linear-gradient(90deg, #f39c12, #e67e22)';
+      } else {
+        progressBar.style.background = 'linear-gradient(90deg, #8b5a3c, #a67c52)';
+      }
+      
+      // Update timestamp
+      const now = new Date();
+      document.getElementById('lastUpdate').textContent = 
+        `✓ Updated: ${now.toLocaleTimeString()}`;
+      
+      console.log(`📊 Weight: ${weight}g (${percentage}%)`);
+    })
+    .catch(error => {
+      console.error('❌ Error:', error);
+      document.getElementById('lastUpdate').textContent = '❌ Connection error';
+    });
+}
+
+// Update every 1 second
+setInterval(updateFoodLevel, 1000);
+updateFoodLevel(); // Run immediately
+</script>
   </body>
 </html>
