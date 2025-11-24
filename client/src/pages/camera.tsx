@@ -125,7 +125,7 @@ const CameraStream: React.FC<CameraStreamProps> = ({
             fontFamily: "Montserrat, sans-serif"
           }}
         >
-          🔄 Refresh Stream
+          Refresh Stream
         </button>
         
         <button
@@ -147,7 +147,7 @@ const CameraStream: React.FC<CameraStreamProps> = ({
             fontSize: "12px"
           }}
         >
-          📺 Open Direct Stream
+          Open Direct Stream
         </button>
       </div>
     </div>
@@ -224,16 +224,16 @@ export default function Camera() {
           
           <div style={{ display: 'grid', gap: '6px', fontSize: '12px' }}>
             <p style={{ margin: '0', color: '#174143' }}>
-              📡 <strong>Stream URL:</strong> {streamUrl}
+              <strong>Stream URL:</strong> {streamUrl}
             </p>
             <p style={{ margin: '0', color: '#666' }}>
-              📹 <strong>Format:</strong> MJPEG Stream
+              <strong>Format:</strong> MJPEG Stream
             </p>
             <p style={{ margin: '0', color: '#666' }}>
-              🔄 <strong>Auto Refresh:</strong> Every 30 seconds
+              <strong>Auto Refresh:</strong> Every 30 seconds
             </p>
             <p style={{ margin: '0', color: '#666' }}>
-              🌐 <strong>Direct Access:</strong> Click "Open Direct Stream" for full screen view
+              <strong>Direct Access:</strong> Click "Open Direct Stream" for full screen view
             </p>
           </div>
         </div>
@@ -248,7 +248,7 @@ export default function Camera() {
           fontSize: '12px' 
         }}>
           <p style={{ margin: '0', color: '#856404', fontWeight: 600 }}>
-            💡 <strong>Tip:</strong> If stream doesn't load, make sure ESP32-CAM at 10.32.10.1:81 is powered on and connected to WiFi.
+            <strong>Tip:</strong> If stream doesn't load, make sure ESP32-CAM at 10.32.10.1:81 is powered on and connected to WiFi.
           </p>
         </div>
       </div>
