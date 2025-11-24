@@ -3,59 +3,40 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/context/AuthContext";
 
 const navItems = [
-  { title: "Home", url: "/", iconPath: "/assets/material-symbols-light_home-outline-rounded.svg" },
-  { title: "Schedule", url: "/schedule", iconPath: "/assets/mynaui_calendar.svg" },
-  { title: "History", url: "/history", iconPath: "/assets/solar_history-line-duotone.svg" },
-  { title: "Camera", url: "/camera", iconPath: "/assets/solar_camera-outline.svg" },
+  { title: "Home", url: "/", icon: Home },
+  { title: "Schedule", url: "/schedule", icon: Calendar },
+  { title: "History", url: "/history", icon: History },
+  { title: "Camera", url: "/camera", icon: Camera },
+  // Profile moved to top-right corner; removed from bottom nav
 ];
 
 export function BottomNav() {
   const { user } = useAuth();
-  if (!user) return null;
   const [location] = useLocation();
+  
+  // don't render the bottom navigation if there's no authenticated user
+  if (!user) return null;
 
   return (
-    <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-50 pb-4">
-      <div
-        className="flex items-center justify-around"
-        style={{
-          width: '309px',
-          height: '50px',
-          flexShrink: 0,
-          borderRadius: '18px',
-          background: 'linear-gradient(90deg, #427A76 0.01%, #174143 50.5%)',
-          boxShadow: '0 3px 3.2px -1px rgba(0, 0, 0, 0.25)'
-        }}
-      >
-        {navItems.map((item) => {
+    // show bottom navigation on all viewports so desktop matches mobile layout
+    <nav className="bottom-nav fixed bottom-0 left-0 right-0 bg-card border-t border-card-border z-50">
+      <div className="flex items-center justify-around h-16">
+        {navItems.map((item, index) => {
           const isActive = location === item.url;
+          const Icon = item.icon;
           
           return (
             <Link
-              key={item.title}
+              key={`${item.title}-${index}`}
               href={item.url}
               data-testid={`link-${item.title.toLowerCase()}-mobile`}
             >
               <button
-                className="nav-item flex flex-col items-center justify-center rounded-full p-3 transition-all duration-200 hover:bg-white/20 hover:backdrop-blur-md hover:shadow-lg"
-                style={{
-                  backgroundColor: isActive ? 'white' : 'transparent',
-                  width: '48px',
-                  height: '48px'
-                }}
-                data-active={isActive}
+                className={`nav-item flex flex-col items-center justify-center h-full px-3 min-w-[60px] hover-elevate active-elevate-2 rounded-md ${
+                  isActive ? "active" : ""
+                }`}
               >
-                <img 
-                  src={item.iconPath}
-                  alt={item.title}
-                  style={{
-                    width: '24px',
-                    height: '24px',
-                    filter: isActive 
-                      ? 'brightness(0) saturate(100%) invert(13%) sepia(18%) saturate(1943%) hue-rotate(138deg) brightness(96%) contrast(93%)'
-                      : 'brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7500%) hue-rotate(175deg) brightness(104%) contrast(101%)'
-                  }}
-                />
+                <Icon className="h-6 w-6" />
               </button>
             </Link>
           );
