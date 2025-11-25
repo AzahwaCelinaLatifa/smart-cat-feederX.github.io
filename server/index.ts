@@ -4,6 +4,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import cors from 'cors';
 import { createServer } from "http";
 import { createClient } from '@supabase/supabase-js';
+import axios from 'axios';
 
 // Validasi environment variables
 if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
@@ -14,6 +15,10 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
+
+// ESP32 Servo Configuration
+// Set this after uploading the ESP32 servo code
+const SERVO_ESP32_IP = process.env.SERVO_ESP32_IP || null; // e.g., "192.168.1.100"
 
 // Helper function untuk mendapatkan user dari header
 async function getUserFromAuthHeader(authHeader?: string) {
@@ -109,6 +114,22 @@ app.post('/api/feed/manual', auth, async (req, res) => {
     
     if (!Number.isFinite(portion) || portion < 1 || portion > 10) {
       return res.status(400).json({ message: 'Portion harus 1..10' });
+    }
+
+    // 🔹 Send command to ESP32 Servo to feed now
+    if (SERVO_ESP32_IP) {
+      try {
+        console.log(`🍽️ Sending feed command to ESP32 at ${SERVO_ESP32_IP}...`);
+        const esp32Response = await axios.post(`http://${SERVO_ESP32_IP}/feed`, {}, {
+          timeout: 5000
+        });
+        console.log(`✓ ESP32 servo responded:`, esp32Response.data);
+      } catch (esp32Error: any) {
+        console.error(`❌ Failed to communicate with ESP32 servo:`, esp32Error.message);
+        // Continue to record in database even if ESP32 communication fails
+      }
+    } else {
+      console.warn('⚠️ SERVO_ESP32_IP not configured, skipping ESP32 command');
     }
 
     const nowIso = new Date().toISOString();

@@ -15,10 +15,12 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { manualFeed } from "@/services/api";
 
 export default function Home() {
   const { toast } = useToast();
   const [showFeedDialog, setShowFeedDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { open } = useSidebar();
   
   // Adjust gap based on sidebar state
@@ -64,12 +66,34 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleFeedNow = () => {
+  const handleFeedNow = async () => {
     setShowFeedDialog(false);
+    setLoading(true);
+
     toast({
       title: "Feeding in progress",
-      description: "Your cat is being fed now!",
+      description: "Dispensing food now...",
     });
+
+    try {
+      // Call backend API to trigger ESP32 servo
+      const res = await manualFeed(2);
+      console.log("FeedNow success:", res);
+
+      toast({
+        title: "Feeding command sent!",
+        description: "Your cat is being fed now!",
+      });
+    } catch (err: any) {
+      console.error("FeedNow failed:", err);
+      toast({
+        title: "Error sending command",
+        description: err?.message || "Please try again",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -394,6 +418,7 @@ export default function Home() {
             onClick={() => setShowFeedDialog(true)} 
             className="w-full max-w-[263px]"
             data-testid="button-feed-now"
+            disabled={loading}
             style={{
               height: '39px',
               flexShrink: 0,
@@ -409,7 +434,7 @@ export default function Home() {
               letterSpacing: '0.48px'
             }}
           >
-            Feed Now
+            {loading ? "Feeding..." : "Feed Now"}
           </Button>
         </CardContent>
         </Card>
@@ -427,6 +452,7 @@ export default function Home() {
             <AlertDialogAction 
               onClick={handleFeedNow} 
               data-testid="button-confirm-feed"
+              disabled={loading}
               style={{
                 backgroundColor: '#174143',
                 color: 'white'
